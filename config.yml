@@ -1,0 +1,17 @@
+db:
+  user:     root
+  password: XINGchen...
+  port:     3306
+
+net:
+  http: :8081
+  socket: :8000
+
+encr:
+  desckey: 14725891
+
+#contacts:
+#  - name:  niuker
+#    email: niukuangduo@gmail.com
+#  - name:  xing
+#    email: test@test.com
