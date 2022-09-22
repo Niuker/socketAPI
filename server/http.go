@@ -1,7 +1,7 @@
 package server
 
 import (
-	"WebsocketDemo/router"
+	"WebsocketDemo/app/router"
 	"github.com/gorilla/mux"
 	"net/http"
 )

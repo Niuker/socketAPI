@@ -29,7 +29,7 @@ func main() {
 		client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"user_id\":\"Rn+lqjJcpT0=\"},\"timestamp\":123}\n"))
 		time.Sleep(time.Second * 1)
 
-		client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"user_id\":\"Rn+lqjJcpT0=\"},\"timestamp\":123311113}\n"))
+		client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"user_id\":\"jHsnLfAZIpcoUHBZPzYWww==\",\"date\":\"12312\"},\"timestamp\":123311113}\n"))
 		//time.Sleep(time.Millisecond * 10)
 		//
 		client.Connect.Write([]byte("{\"Event\":\"setMissions\",\"params\":{\"user_id\":\"Rn+lqjJcpT0=\"},\"timestamp\":123333333}\n"))

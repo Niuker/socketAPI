@@ -1,9 +1,9 @@
 package router
 
 import (
-	"WebsocketDemo/common"
-	"WebsocketDemo/services"
-	"WebsocketDemo/structure"
+	"WebsocketDemo/app/common"
+	"WebsocketDemo/app/services"
+	"WebsocketDemo/app/structure"
 	"encoding/json"
 	"net"
 )
@@ -12,13 +12,8 @@ func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]cha
 
 	res := structure.ResData{Data: make(map[string]string)}
 
-	//time.Sleep(time.Second * 5)
-
-	common.Log(mid, 22, c)
-
 	select {
 	case req := <-c["xc"]["getMissions"]:
-		common.Log(mid, 33)
 
 		if data, err := services.GetMissions(req); err == nil {
 			res.Data = data
@@ -38,7 +33,6 @@ func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]cha
 		//	res.Error = "event not fount"
 		//}
 	}
-	common.Log(mid, 11)
 
 	resJson, err := json.Marshal(res)
 	if err != nil {

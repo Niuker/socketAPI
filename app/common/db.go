@@ -1,7 +1,7 @@
 package common
 
 import (
-	"WebsocketDemo/config"
+	"WebsocketDemo/app/config"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -68,7 +68,7 @@ func InitDB() {
 		return
 	}
 	Db = database
-	Db.SetMaxIdleConns(20)
-	Db.SetMaxOpenConns(20)
-	//defer Db.Close() // 注意这行代码要写在上面err判断的下面
+	Db.SetMaxIdleConns(1)
+	Db.SetMaxOpenConns(1)
+	//defer Db.Close()
 }

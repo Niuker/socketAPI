@@ -1,11 +1,11 @@
 package server
 
 import (
-	"WebsocketDemo/common"
-	"WebsocketDemo/config"
-	"WebsocketDemo/encr"
-	"WebsocketDemo/router"
-	"WebsocketDemo/structure"
+	"WebsocketDemo/app/common"
+	"WebsocketDemo/app/config"
+	"WebsocketDemo/app/encr"
+	"WebsocketDemo/app/router"
+	"WebsocketDemo/app/structure"
 	"encoding/json"
 	"net"
 )

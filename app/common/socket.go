@@ -1,7 +1,7 @@
 package common
 
 import (
-	"WebsocketDemo/structure"
+	"WebsocketDemo/app/structure"
 	"encoding/json"
 	"fmt"
 	"log"
