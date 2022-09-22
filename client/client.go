@@ -26,14 +26,14 @@ func main() {
 		fmt.Println("连接服务端成功", client)
 
 		//for true {
-		client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"id\":\"Rn+lqjJcpT0=\"},\"timestamp\":123}\n"))
+		client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"user_id\":\"Rn+lqjJcpT0=\"},\"timestamp\":123}\n"))
 		time.Sleep(time.Second * 1)
 
-		client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"id\":\"Rn+lqjJcpT0=\"},\"timestamp\":123311113}\n"))
+		client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"user_id\":\"Rn+lqjJcpT0=\"},\"timestamp\":123311113}\n"))
 		//time.Sleep(time.Millisecond * 10)
 		//
-		client.Connect.Write([]byte("{\"Event\":\"setMissions\",\"params\":{\"id\":\"Rn+lqjJcpT0=\"},\"timestamp\":123333333}\n"))
-		client.Connect.Write([]byte("{\"Event\":\"setMissions\",\"params\":{\"id\":\"Rn+lqjJcpT0=\",\"a\":\"1233\"},\"timestamp\":1233333555}\n"))
+		client.Connect.Write([]byte("{\"Event\":\"setMissions\",\"params\":{\"user_id\":\"Rn+lqjJcpT0=\"},\"timestamp\":123333333}\n"))
+		client.Connect.Write([]byte("{\"Event\":\"setMissions\",\"params\":{\"user_idf\":\"Rn+lqjJcpT0=\",\"a\":\"1233\"},\"timestamp\":1233333555}\n"))
 
 		//}
 		client.Wg.Wait()

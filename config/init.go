@@ -8,7 +8,7 @@ type Config struct {
 	DB struct {
 		User     string `default:"root"`
 		Password string `required:"true" env:"DBPassword"`
-		Port     uint   `default:"3306"`
+		Port     string `default:"3306"`
 	}
 	NET struct {
 		Http   string `default:":8091"`

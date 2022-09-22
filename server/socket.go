@@ -67,11 +67,11 @@ func handleConnection(conn net.Conn, c map[string]map[string]chan map[string]str
 		return
 	}
 
-	if _, ok := raw[0].Params["id"]; !ok {
+	if _, ok := raw[0].Params["user_id"]; !ok {
 		common.SendConn(conn, "please set id before use server")
 	}
 
-	mid, err = encr.ECBDecrypter(config.MyConfig.ENCR.Desckey, string(raw[0].Params["id"]))
+	mid, err = encr.ECBDecrypter(config.MyConfig.ENCR.Desckey, string(raw[0].Params["user_id"]))
 	if err != nil || mid == "" {
 		common.SendConn(conn, "id is not reasonable")
 	}

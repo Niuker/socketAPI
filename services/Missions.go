@@ -1,16 +1,242 @@
 package services
 
-import "WebsocketDemo/common"
+import (
+	"WebsocketDemo/common"
+	"WebsocketDemo/config"
+	"WebsocketDemo/encr"
+	"WebsocketDemo/structure"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
+	"strconv"
+	"time"
+)
+
+func ControllerSetMissions(w http.ResponseWriter, r *http.Request) {
+	setMissionsReqData := make(map[string]string)
+	res := structure.ResData{Data: make(map[string]string)}
+	err := r.ParseForm()
+	if err != nil {
+		fmt.Printf("ParseForm error: %s\n", err)
+	}
+
+	querys := r.PostForm
+	for key, query := range querys {
+		setMissionsReqData[key] = query[0]
+	}
+
+	if id, ok := querys["user_id"]; ok {
+		setMissionsReqData["user_id"] = id[0]
+	}
+
+	if isday, ok := querys["isday"]; ok {
+		setMissionsReqData["isday"] = isday[0]
+	}
+
+	if date, ok := querys["date"]; ok {
+		setMissionsReqData["date"] = date[0]
+	}
+
+	data, err := SetMissions(setMissionsReqData)
+	if err != nil {
+		w.WriteHeader(400)
+		res.Code = 1
+		res.Error = err.Error()
+		msg, _ := json.Marshal(res)
+		w.Write(msg)
+	} else {
+		res.Data = data
+		msg, _ := json.Marshal(res)
+		w.Write(msg)
+	}
+
+}
+
+func ControllerGetMissions(w http.ResponseWriter, r *http.Request) {
+	getMissionsReqData := make(map[string]string)
+	res := structure.ResData{Data: make(map[string]string)}
+	query := r.URL.Query()
+
+	if id, ok := query["user_id"]; ok {
+		getMissionsReqData["user_id"] = id[0]
+	}
+
+	if isday, ok := query["isday"]; ok {
+		getMissionsReqData["isday"] = isday[0]
+	}
+
+	if date, ok := query["date"]; ok {
+		getMissionsReqData["date"] = date[0]
+	}
+
+	data, err := GetMissions(getMissionsReqData)
+	if err != nil {
+		w.WriteHeader(400)
+		res.Code = 1
+		res.Error = err.Error()
+		msg, _ := json.Marshal(res)
+		w.Write(msg)
+	} else {
+		res.Data = data
+		msg, _ := json.Marshal(res)
+		w.Write(msg)
+	}
+
+}
+
+func initMission(id int, date int) error {
+	var missions []common.Missions
+	var missionField []common.MissionField
+	var insertMissions []common.Missions
+
+	err := common.Db.Select(&missions, "select * from missions where user_id=? and date=?", id, date)
+	if err != nil {
+		common.Log("exec failed, ", err)
+		return errors.New("get missions error")
+	}
+	err = common.Db.Select(&missionField, "select * from mission_field")
+	if err != nil {
+		common.Log("exec failed, ", err)
+		return errors.New("get mission field error")
+	}
+	if len(missions) == len(missionField) {
+		return nil
+	}
+
+outside:
+	for _, mf := range missionField {
+		for _, m := range missions {
+			if m.MissionFieldId == mf.Id {
+				continue outside
+			}
+		}
+		var tmpMission common.Missions
+		tmpMission.MissionFieldId = mf.Id
+		tmpMission.UserId = id
+		tmpMission.Value = mf.Default
+		tmpMission.UpdateTime = int(time.Now().Unix())
+		tmpMission.Date = date
+		insertMissions = append(insertMissions, tmpMission)
+	}
+	fmt.Println(insertMissions[0].UserId)
+	_, err = common.Db.NamedExec(`INSERT INTO missions (user_id, mission_field_id, value,update_time,date) 
+VALUES (:user_id, :mission_field_id, :value, :update_time, :date)`, insertMissions)
+	if err != nil {
+		common.Log("exec failed, ", err)
+		return errors.New("insert missions field error")
+	}
+	return nil
+}
+
+func getMissions(id int, isday string, date int) ([]common.MissionsANDMissionField, error) {
+	var missions []common.MissionsANDMissionField
+	err := common.Db.Select(&missions, `select user_id, value, name, mf.default, isday 
+from missions as m left join mission_field as mf ON m.mission_field_id = mf.id
+where m.user_id=? and  m.date=? and mf.isday=?`, id, date, isday)
+	if err != nil {
+		fmt.Println("exec failed, ", err)
+		return nil, errors.New("getMissions field error")
+	}
+
+	return missions, nil
+}
 
 func GetMissions(req map[string]string) (interface{}, error) {
-	common.Log(req, 7777)
+	if _, ok := req["user_id"]; !ok {
+		return nil, errors.New("user不能为空")
+	}
+	if _, ok := req["date"]; !ok {
+		return nil, errors.New("date不能为空")
+	}
+	mid, err := encr.ECBDecrypter(config.MyConfig.ENCR.Desckey, req["user_id"])
+	if mid == "" || err != nil {
+		return nil, errors.New("本次user解密失败")
+	}
+	id, err := strconv.Atoi(mid)
+	if err != nil {
+		return nil, errors.New("id错误")
+	}
+	date, err := strconv.Atoi(req["date"])
+	if err != nil {
+		return nil, errors.New("date错误")
+	}
 
-	m := []int{1, 12, 345}
+	isday := "1"
+	if _, ok := req["isday"]; ok {
+		isday = req["isday"]
+	}
+
+	err = initMission(id, date)
+	if err != nil {
+		return nil, err
+	}
+
+	m, err := getMissions(id, isday, date)
+	if err != nil {
+		return nil, err
+	}
 	return m, nil
 }
 
 func SetMissions(req map[string]string) (interface{}, error) {
-	common.Log(req, 999999)
-	m := map[string]string{"1231": "3213", "123das": "123"}
+	if _, ok := req["user_id"]; !ok {
+		return nil, errors.New("user不能为空")
+	}
+	if _, ok := req["date"]; !ok {
+		return nil, errors.New("date不能为空")
+	}
+	mid, err := encr.ECBDecrypter(config.MyConfig.ENCR.Desckey, req["user_id"])
+	if mid == "" || err != nil {
+		return nil, errors.New("本次user解密失败")
+	}
+	id, err := strconv.Atoi(mid)
+	if err != nil {
+		return nil, errors.New("id错误")
+	}
+	date, err := strconv.Atoi(req["date"])
+	if err != nil {
+		return nil, errors.New("date错误")
+	}
+
+	isday := "1"
+	if _, ok := req["isday"]; ok {
+		isday = req["isday"]
+	}
+
+	err = initMission(id, date)
+	if err != nil {
+		return nil, err
+	}
+
+	var missionField []common.MissionField
+	err = common.Db.Select(&missionField, "select * from mission_field")
+	if err != nil {
+		common.Log("exec failed, ", err)
+		return nil, errors.New("get mission field error")
+	}
+
+	for _, mf := range missionField {
+		if _, ok := req[mf.Name]; ok {
+			if req[mf.Name] == "add" {
+				_, err = common.Db.Exec("update missions set `value`=value+1 where date=? and user_id=? and mission_field_id=?",
+					date, id, mf.Id)
+			} else if req[mf.Name] == "default" {
+				_, err = common.Db.Exec("update missions set value=? where date=? and user_id=? and mission_field_id=? ",
+					mf.Default, date, id, mf.Id)
+			} else {
+				_, err = common.Db.Exec("update missions set value=? where date=? and user_id=? and mission_field_id=? ",
+					req[mf.Name], date, id, mf.Id)
+			}
+			if err != nil {
+				common.Log("exec failed, ", err)
+				return nil, errors.New("update missions field error")
+			}
+		}
+	}
+	m, err := getMissions(id, isday, date)
+	if err != nil {
+		return nil, err
+	}
 	return m, nil
 }

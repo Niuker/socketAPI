@@ -1,7 +1,7 @@
 package structure
 
 type ResData struct {
-	Code  string
-	Error string
-	Data  interface{}
+	Code  int         `json:"code"`
+	Error string      `json:"error"`
+	Data  interface{} `json:"data"`
 }
