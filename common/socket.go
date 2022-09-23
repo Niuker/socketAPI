@@ -11,6 +11,22 @@ import (
 	"time"
 )
 
+func SocketRouter(req map[string]string, f func(map[string]string) (interface{}, error)) structure.ResData {
+	res := structure.ResData{Data: make(map[string]string)}
+
+	data, err := f(req)
+	Log("socket", req, data)
+
+	if err == nil {
+		res.Data = data
+	} else {
+		res.Code = 1
+		res.Error = err.Error()
+	}
+
+	return res
+}
+
 func ReadConn(conn net.Conn) ([]structure.ReqData, error) {
 	conn.SetDeadline(time.Now().Add(30 * time.Minute))
 
