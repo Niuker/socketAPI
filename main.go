@@ -1,9 +1,9 @@
 package main
 
 import (
-	"WebsocketDemo/common"
-	"WebsocketDemo/config"
-	"WebsocketDemo/server"
+	"socketAPI/common"
+	"socketAPI/config"
+	"socketAPI/server"
 )
 
 func main() {

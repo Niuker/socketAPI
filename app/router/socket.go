@@ -1,11 +1,11 @@
 package router
 
 import (
-	"WebsocketDemo/app/common"
-	"WebsocketDemo/app/services"
-	"WebsocketDemo/app/structure"
 	"encoding/json"
 	"net"
+	"socketAPI/app/services"
+	"socketAPI/app/structure"
+	"socketAPI/common"
 )
 
 func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]chan map[string]string) {

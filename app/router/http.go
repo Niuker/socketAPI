@@ -1,8 +1,8 @@
 package router
 
 import (
-	"WebsocketDemo/app/router/httpController"
 	"github.com/gorilla/mux"
+	"socketAPI/app/router/httpController"
 )
 
 func RegisterRoutes(r *mux.Router) {

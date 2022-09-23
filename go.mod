@@ -1,4 +1,4 @@
-module WebsocketDemo
+module socketAPI
 
 go 1.18
 

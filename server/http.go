@@ -1,9 +1,9 @@
 package server
 
 import (
-	"WebsocketDemo/app/router"
 	"github.com/gorilla/mux"
 	"net/http"
+	"socketAPI/app/router"
 )
 
 func HttpConnect(p string) {

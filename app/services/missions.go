@@ -1,28 +1,28 @@
 package services
 
 import (
-	"WebsocketDemo/app/common"
-	"WebsocketDemo/app/config"
-	"WebsocketDemo/app/encr"
 	"errors"
 	"fmt"
+	"socketAPI/app/encr"
+	common2 "socketAPI/common"
+	"socketAPI/config"
 	"strconv"
 	"time"
 )
 
 func initMission(id int, date int) error {
-	var missions []common.Missions
-	var missionField []common.MissionField
-	var insertMissions []common.Missions
+	var missions []common2.Missions
+	var missionField []common2.MissionField
+	var insertMissions []common2.Missions
 
-	err := common.Db.Select(&missions, "select * from missions where user_id=? and date=?", id, date)
+	err := common2.Db.Select(&missions, "select * from missions where user_id=? and date=?", id, date)
 	if err != nil {
-		common.Log("exec failed, ", err)
+		common2.Log("exec failed, ", err)
 		return errors.New("get missions error")
 	}
-	err = common.Db.Select(&missionField, "select * from mission_field")
+	err = common2.Db.Select(&missionField, "select * from mission_field")
 	if err != nil {
-		common.Log("exec failed, ", err)
+		common2.Log("exec failed, ", err)
 		return errors.New("get mission field error")
 	}
 	if len(missions) == len(missionField) {
@@ -36,7 +36,7 @@ outside:
 				continue outside
 			}
 		}
-		var tmpMission common.Missions
+		var tmpMission common2.Missions
 		tmpMission.MissionFieldId = mf.Id
 		tmpMission.UserId = id
 		tmpMission.Value = mf.Default
@@ -45,18 +45,18 @@ outside:
 		insertMissions = append(insertMissions, tmpMission)
 	}
 	fmt.Println(insertMissions[0].UserId)
-	_, err = common.Db.NamedExec(`INSERT INTO missions (user_id, mission_field_id, value,update_time,date) 
+	_, err = common2.Db.NamedExec(`INSERT INTO missions (user_id, mission_field_id, value,update_time,date) 
 VALUES (:user_id, :mission_field_id, :value, :update_time, :date)`, insertMissions)
 	if err != nil {
-		common.Log("exec failed, ", err)
+		common2.Log("exec failed, ", err)
 		return errors.New("insert missions field error")
 	}
 	return nil
 }
 
-func getMissions(id int, isday string, date int) ([]common.MissionsANDMissionField, error) {
-	var missions []common.MissionsANDMissionField
-	err := common.Db.Select(&missions, `select user_id, value, name, mf.default, isday 
+func getMissions(id int, isday string, date int) ([]common2.MissionsANDMissionField, error) {
+	var missions []common2.MissionsANDMissionField
+	err := common2.Db.Select(&missions, `select user_id, value, name, mf.default, isday 
 from missions as m left join mission_field as mf ON m.mission_field_id = mf.id
 where m.user_id=? and  m.date=? and mf.isday=?`, id, date, isday)
 	if err != nil {
@@ -134,27 +134,27 @@ func SetMissions(req map[string]string) (interface{}, error) {
 		return nil, err
 	}
 
-	var missionField []common.MissionField
-	err = common.Db.Select(&missionField, "select * from mission_field")
+	var missionField []common2.MissionField
+	err = common2.Db.Select(&missionField, "select * from mission_field")
 	if err != nil {
-		common.Log("exec failed, ", err)
+		common2.Log("exec failed, ", err)
 		return nil, errors.New("get mission field error")
 	}
 
 	for _, mf := range missionField {
 		if _, ok := req[mf.Name]; ok {
 			if req[mf.Name] == "add" {
-				_, err = common.Db.Exec("update missions set `value`=value+1 where date=? and user_id=? and mission_field_id=?",
+				_, err = common2.Db.Exec("update missions set `value`=value+1 where date=? and user_id=? and mission_field_id=?",
 					date, id, mf.Id)
 			} else if req[mf.Name] == "default" {
-				_, err = common.Db.Exec("update missions set value=? where date=? and user_id=? and mission_field_id=? ",
+				_, err = common2.Db.Exec("update missions set value=? where date=? and user_id=? and mission_field_id=? ",
 					mf.Default, date, id, mf.Id)
 			} else {
-				_, err = common.Db.Exec("update missions set value=? where date=? and user_id=? and mission_field_id=? ",
+				_, err = common2.Db.Exec("update missions set value=? where date=? and user_id=? and mission_field_id=? ",
 					req[mf.Name], date, id, mf.Id)
 			}
 			if err != nil {
-				common.Log("exec failed, ", err)
+				common2.Log("exec failed, ", err)
 				return nil, errors.New("update missions field error")
 			}
 		}

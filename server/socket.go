@@ -1,13 +1,13 @@
 package server
 
 import (
-	"WebsocketDemo/app/common"
-	"WebsocketDemo/app/config"
-	"WebsocketDemo/app/encr"
-	"WebsocketDemo/app/router"
-	"WebsocketDemo/app/structure"
 	"encoding/json"
 	"net"
+	"socketAPI/app/encr"
+	"socketAPI/app/router"
+	"socketAPI/app/structure"
+	"socketAPI/common"
+	"socketAPI/config"
 )
 
 func Socket(listion string, c map[string]map[string]chan map[string]string) {

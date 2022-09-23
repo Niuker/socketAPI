@@ -1,12 +1,12 @@
 package common
 
 import (
-	"WebsocketDemo/app/structure"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net"
 	"os"
+	"socketAPI/app/structure"
 	"strings"
 	"time"
 )

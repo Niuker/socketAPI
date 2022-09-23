@@ -1,28 +1,28 @@
 package services
 
 import (
-	"WebsocketDemo/app/common"
-	"WebsocketDemo/app/config"
-	"WebsocketDemo/app/encr"
 	"errors"
 	"fmt"
+	"socketAPI/app/encr"
+	common2 "socketAPI/common"
+	"socketAPI/config"
 	"strconv"
 	"time"
 )
 
 func initTimer(id int) error {
-	var timers []common.Timers
-	var timerField []common.TimerField
-	var insertTimers []common.Timers
+	var timers []common2.Timers
+	var timerField []common2.TimerField
+	var insertTimers []common2.Timers
 
-	err := common.Db.Select(&timers, "select * from timers where user_id=?", id)
+	err := common2.Db.Select(&timers, "select * from timers where user_id=?", id)
 	if err != nil {
-		common.Log("exec failed, ", err)
+		common2.Log("exec failed, ", err)
 		return errors.New("get timers error")
 	}
-	err = common.Db.Select(&timerField, "select * from timer_field")
+	err = common2.Db.Select(&timerField, "select * from timer_field")
 	if err != nil {
-		common.Log("exec failed, ", err)
+		common2.Log("exec failed, ", err)
 		return errors.New("get timer field error")
 	}
 	if len(timers) == len(timerField) {
@@ -36,25 +36,25 @@ outside:
 				continue outside
 			}
 		}
-		var tmpTimer common.Timers
+		var tmpTimer common2.Timers
 		tmpTimer.TimerFieldId = mf.Id
 		tmpTimer.UserId = id
 		tmpTimer.Value = mf.Default
 		tmpTimer.UpdateTime = int(time.Now().Unix())
 		insertTimers = append(insertTimers, tmpTimer)
 	}
-	_, err = common.Db.NamedExec(`INSERT INTO timers (user_id, timer_field_id, value,update_time,date) 
+	_, err = common2.Db.NamedExec(`INSERT INTO timers (user_id, timer_field_id, value,update_time,date) 
 VALUES (:user_id, :timer_field_id, :value, :update_time, :date)`, insertTimers)
 	if err != nil {
-		common.Log("exec failed, ", err)
+		common2.Log("exec failed, ", err)
 		return errors.New("insert timers field error")
 	}
 	return nil
 }
 
-func getTimers(id int) ([]common.TimersANDTimerField, error) {
-	var timers []common.TimersANDTimerField
-	err := common.Db.Select(&timers, `select user_id, value, name, mf.default 
+func getTimers(id int) ([]common2.TimersANDTimerField, error) {
+	var timers []common2.TimersANDTimerField
+	err := common2.Db.Select(&timers, `select user_id, value, name, mf.default 
 from timers as m left join timer_field as mf ON m.timer_field_id = mf.id
 where m.user_id=?`, id)
 	if err != nil {
@@ -108,27 +108,27 @@ func SetTimers(req map[string]string) (interface{}, error) {
 		return nil, err
 	}
 
-	var timerField []common.TimerField
-	err = common.Db.Select(&timerField, "select * from timer_field")
+	var timerField []common2.TimerField
+	err = common2.Db.Select(&timerField, "select * from timer_field")
 	if err != nil {
-		common.Log("exec failed, ", err)
+		common2.Log("exec failed, ", err)
 		return nil, errors.New("get timer field error")
 	}
 
 	for _, mf := range timerField {
 		if _, ok := req[mf.Name]; ok {
 			if req[mf.Name] == "add" {
-				_, err = common.Db.Exec("update timers set `value`=value+1 where  user_id=? and timer_field_id=?",
+				_, err = common2.Db.Exec("update timers set `value`=value+1 where  user_id=? and timer_field_id=?",
 					id, mf.Id)
 			} else if req[mf.Name] == "default" {
-				_, err = common.Db.Exec("update timers set value=? where user_id=? and timer_field_id=? ",
+				_, err = common2.Db.Exec("update timers set value=? where user_id=? and timer_field_id=? ",
 					mf.Default, id, mf.Id)
 			} else {
-				_, err = common.Db.Exec("update timers set value=? where user_id=? and timer_field_id=? ",
+				_, err = common2.Db.Exec("update timers set value=? where user_id=? and timer_field_id=? ",
 					req[mf.Name], id, mf.Id)
 			}
 			if err != nil {
-				common.Log("exec failed, ", err)
+				common2.Log("exec failed, ", err)
 				return nil, errors.New("update timers field error")
 			}
 		}

@@ -17,3 +17,5 @@
 
 # Go workspace file
 go.work
+upload
+common/db.go

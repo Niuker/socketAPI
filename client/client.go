@@ -1,8 +1,8 @@
 package main
 
 import (
-	"WebsocketDemo/client/model"
 	"fmt"
+	"socketAPI/client/model"
 	"time"
 )
 

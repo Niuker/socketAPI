@@ -1,11 +1,11 @@
 package httpController
 
 import (
-	"WebsocketDemo/app/services"
-	"WebsocketDemo/app/structure"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"socketAPI/app/services"
+	"socketAPI/app/structure"
 )
 
 func ControllerSetTimers(w http.ResponseWriter, r *http.Request) {
