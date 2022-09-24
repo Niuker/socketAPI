@@ -1,7 +1,8 @@
 package structure
 
 type ReqData struct {
-	Event     string
-	Params    map[string]string
-	Timestamp int
+	Event     string            `json:"event"`
+	Params    map[string]string `json:"params"`
+	Timestamp int               `json:"timestamp"`
+	Reqid     string            `json:"reqid"`
 }

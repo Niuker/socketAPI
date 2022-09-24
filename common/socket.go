@@ -11,10 +11,11 @@ import (
 	"time"
 )
 
-func SocketRouter(req map[string]string, f func(map[string]string) (interface{}, error)) structure.ResData {
-	res := structure.ResData{Data: make(map[string]string)}
+func SocketRouter(req structure.ReqData, f func(map[string]string) (interface{}, error)) structure.ResData {
+	res := structure.ResData{Data: make(map[string]string), Timestamp: int(time.Now().Unix())}
+	res.Reqid = req.Reqid
 
-	data, err := f(req)
+	data, err := f(req.Params)
 	Log("socket", req, data)
 
 	if err == nil {

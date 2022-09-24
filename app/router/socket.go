@@ -2,13 +2,14 @@ package router
 
 import (
 	"encoding/json"
+	"errors"
 	"net"
 	"socketAPI/app/services"
 	"socketAPI/app/structure"
 	"socketAPI/common"
 )
 
-func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]chan map[string]string) {
+func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]chan structure.ReqData) {
 	var res structure.ResData
 	select {
 	case req := <-c[mid]["getMissions"]:
@@ -32,6 +33,15 @@ func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]cha
 		res = common.SocketRouter(req, services.GetMachines)
 	case req := <-c[mid]["setMachines"]:
 		res = common.SocketRouter(req, services.SetMachines)
+
+	case req := <-c[mid]["send"]:
+		res = common.SocketRouter(req, func(m map[string]string) (interface{}, error) {
+			return m, nil
+		})
+	case req := <-c[mid]["timeout"]:
+		res = common.SocketRouter(req, func(m map[string]string) (interface{}, error) {
+			return nil, errors.New("timeout")
+		})
 
 		//default:
 		//	res.Code = 1

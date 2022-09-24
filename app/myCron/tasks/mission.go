@@ -7,17 +7,21 @@ import (
 )
 
 func MissionsWeek() {
-	delMissions(time.Now().Add(-7 * time.Hour * 24 * 4).Unix())
+	delMissions(time.Now().Add(-7*time.Hour*24*4).Unix(), false)
 
 }
 func MissionsDay() {
-	delMissions(time.Now().Add(-7 * time.Hour * 24).Unix())
+	delMissions(time.Now().Add(-7*time.Hour*24).Unix(), true)
 }
 
-func delMissions(t int64) {
+func delMissions(t int64, isday bool) {
 	var missionField []common.MissionField
 
-	err := common.Db.Select(&missionField, "select id from mission_field")
+	mfsql := "select id from mission_field where isday = 0"
+	if isday {
+		mfsql = "select id from mission_field where isday = 1"
+	}
+	err := common.Db.Select(&missionField, mfsql)
 
 	if err != nil {
 		common.Log("crontab error", err)
@@ -38,6 +42,7 @@ func delMissions(t int64) {
 		if err != nil {
 			common.Log("crontab error", err)
 		}
+		common.Log("mission crontab", sql, inIds)
 
 		lastrId, err := res.LastInsertId()
 		if lastrId == 0 {

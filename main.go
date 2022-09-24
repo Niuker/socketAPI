@@ -2,18 +2,20 @@ package main
 
 import (
 	"socketAPI/app/myCron"
+	"socketAPI/app/structure"
 	"socketAPI/common"
 	"socketAPI/config"
 	"socketAPI/server"
 )
 
+func init() {
+	common.InitDB()
+	myCron.Start()
+}
+
 func main() {
 
-	c := make(map[string]map[string]chan map[string]string)
-
-	common.InitDB()
-
-	myCron.Start()
+	c := make(map[string]map[string]chan structure.ReqData)
 
 	go server.HttpConnect(config.MyConfig.NET.Http)
 

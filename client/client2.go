@@ -29,10 +29,16 @@ func main() {
 
 		time.Sleep(time.Second * 1)
 		//for true {
-		client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"user_id\":\"jHsnLfAZIpcoUHBZPzYWww==\"},\"timestamp\":123}\n"))
+		client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"user_id\":\"q3OC3o99xY4=\"},\"timestamp\":123}\n"))
 		time.Sleep(time.Second * 1)
 
-		client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"user_id\":\"jHsnLfAZIpcoUHBZPzYWww==\",\"date\":\"12312\"},\"timestamp\":99123311113}\n"))
+		client.Connect.Write([]byte("{\"event\":\"send\",\"params\":{\"revicer\":\"jHsnLfAZIpcoUHBZPzYWww==\",\"context\":\"221312\"},\"timestamp\":99123311113}\n"))
+		time.Sleep(time.Second * 1)
+
+		client.Connect.Write([]byte("{\"event\":\"send\",\"params\":{\"revicer\":\"jHsnLfAZIpcoUHBZPzYWww==\",\"context\":\"221312\"},\"timestamp\":99123311113}\n"))
+		time.Sleep(time.Second * 1)
+		client.Connect.Write([]byte("{\"event\":\"send\",\"params\":{\"revicer\":\"jHsnLfAZIpcoUHBZPzYWww==\",\"context\":\"221312\"},\"timestamp\":99123311113}\n"))
+		time.Sleep(time.Second * 1)
 		////
 		//client.Connect.Write([]byte("{\"Event\":\"getMissions\",\"params\":{\"user_id\":\"Rn+lqjJcpT0=\",\"date\":\"12312\"},\"timestamp\":99923333333,\"reqid\":\"99923333333\"}\n"))
 		//client.Connect.Write([]byte("{\"Event\":\"getMissions\",\"params\":{\"user_id\":\"jHsnLfAZIpcoUHBZPzYWww==\",\"date\":\"12312\"},\"timestamp\":99923333333,\"reqid\":\"99923333333\"}\n"))

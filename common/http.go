@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"net/http"
 	"socketAPI/app/structure"
+	"time"
 )
 
 func POST(w http.ResponseWriter, r *http.Request, f func(map[string]string) (interface{}, error)) {
 	reqData := make(map[string]string)
-	res := structure.ResData{Data: make(map[string]string)}
+	res := structure.ResData{Data: make(map[string]string), Timestamp: int(time.Now().Unix())}
 	err := r.ParseForm()
 	if err != nil {
 		fmt.Printf("ParseForm error: %s\n", err)
@@ -38,7 +39,7 @@ func POST(w http.ResponseWriter, r *http.Request, f func(map[string]string) (int
 
 func GET(w http.ResponseWriter, r *http.Request, f func(map[string]string) (interface{}, error)) {
 	reqData := make(map[string]string)
-	res := structure.ResData{Data: make(map[string]string)}
+	res := structure.ResData{Data: make(map[string]string), Timestamp: int(time.Now().Unix())}
 	querys := r.URL.Query()
 	for key, query := range querys {
 		reqData[key] = query[0]
