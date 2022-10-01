@@ -2,7 +2,7 @@ package tesseract
 
 import (
 	"encoding/base64"
-	"github.com/otiai10/gosseract"
+	"github.com/otiai10/gosseract/v2"
 	"os"
 	"socketAPI/common"
 	"strings"
