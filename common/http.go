@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func POST(w http.ResponseWriter, r *http.Request, f func(map[string]string) (interface{}, error)) {
+func POST(w http.ResponseWriter, r *http.Request, f func(map[string]string) (interface{}, error), log bool) {
 	reqData := make(map[string]string)
 	res := structure.ResData{Data: make(map[string]string), Timestamp: int(time.Now().Unix())}
 	err := r.ParseForm()
@@ -22,7 +22,9 @@ func POST(w http.ResponseWriter, r *http.Request, f func(map[string]string) (int
 	}
 
 	data, err := f(reqData)
-	Log("http", reqData, data)
+	if log {
+		Log("http", reqData, data)
+	}
 
 	if err != nil {
 		w.WriteHeader(400)
@@ -33,11 +35,12 @@ func POST(w http.ResponseWriter, r *http.Request, f func(map[string]string) (int
 	} else {
 		res.Data = data
 		msg, _ := json.Marshal(res)
+
 		w.Write(msg)
 	}
 }
 
-func GET(w http.ResponseWriter, r *http.Request, f func(map[string]string) (interface{}, error)) {
+func GET(w http.ResponseWriter, r *http.Request, f func(map[string]string) (interface{}, error), log bool) {
 	reqData := make(map[string]string)
 	res := structure.ResData{Data: make(map[string]string), Timestamp: int(time.Now().Unix())}
 	querys := r.URL.Query()
@@ -45,7 +48,9 @@ func GET(w http.ResponseWriter, r *http.Request, f func(map[string]string) (inte
 		reqData[key] = query[0]
 	}
 	data, err := f(reqData)
-	Log("http", reqData, data)
+	if log {
+		Log("http", reqData, data)
+	}
 
 	if err != nil {
 		w.WriteHeader(400)

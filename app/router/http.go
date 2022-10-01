@@ -17,7 +17,12 @@ func RegisterRoutes(r *mux.Router) {
 	wsRouter.HandleFunc("/messages", httpController.AddMessages).Methods("POST")
 	wsRouter.HandleFunc("/del/messages", httpController.DelMessages).Methods("POST")
 
-	wsRouter.HandleFunc("/machine", httpController.GetMachines).Methods("GET")
-	wsRouter.HandleFunc("/machine", httpController.SetMachines).Methods("POST")
+	wsRouter.HandleFunc("/machines", httpController.GetMachines).Methods("GET")
+	wsRouter.HandleFunc("/machines", httpController.SetMachines).Methods("POST")
+
+	wsRouter.HandleFunc("/questions", httpController.UploadQuestion).Methods("POST")
+
+	wsRouter.HandleFunc("/upload1", httpController.UploadPic1).Methods("POST")
+	wsRouter.HandleFunc("/upload2", httpController.UploadPic2).Methods("POST")
 
 }

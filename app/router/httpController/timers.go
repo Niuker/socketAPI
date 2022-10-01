@@ -7,9 +7,9 @@ import (
 )
 
 func SetTimers(w http.ResponseWriter, r *http.Request) {
-	common.POST(w, r, services.SetTimers)
+	common.POST(w, r, services.SetTimers, true)
 }
 
 func GetTimers(w http.ResponseWriter, r *http.Request) {
-	common.GET(w, r, services.GetTimers)
+	common.GET(w, r, services.GetTimers, true)
 }

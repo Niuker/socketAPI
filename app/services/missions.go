@@ -44,7 +44,6 @@ outside:
 		tmpMission.Date = date
 		insertMissions = append(insertMissions, tmpMission)
 	}
-	fmt.Println(insertMissions[0].UserId)
 	_, err = common.Db.NamedExec(`INSERT INTO missions (user_id, mission_field_id, value,update_time,date) 
 VALUES (:user_id, :mission_field_id, :value, :update_time, :date)`, insertMissions)
 	if err != nil {

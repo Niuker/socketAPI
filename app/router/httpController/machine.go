@@ -7,9 +7,9 @@ import (
 )
 
 func SetMachines(w http.ResponseWriter, r *http.Request) {
-	common.POST(w, r, services.SetMachines)
+	common.POST(w, r, services.SetMachines, true)
 }
 
 func GetMachines(w http.ResponseWriter, r *http.Request) {
-	common.GET(w, r, services.GetMachines)
+	common.GET(w, r, services.GetMachines, true)
 }
