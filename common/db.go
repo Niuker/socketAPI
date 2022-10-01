@@ -60,6 +60,13 @@ type Questions struct {
 	Answer   string `db:"answer" json:"answer"`
 }
 
+type Cronuid struct {
+	Id      int `db:"id" json:"id"`
+	UserId  int `db:"user_id" json:"user_id"`
+	ExpTime int `db:"exp_time" json:"exp_time"`
+	Source  int `db:"source" json:"source"`
+}
+
 type MissionsANDMissionField struct {
 	Missions
 	MissionField

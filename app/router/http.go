@@ -25,4 +25,8 @@ func RegisterRoutes(r *mux.Router) {
 	wsRouter.HandleFunc("/upload1", httpController.UploadPic1).Methods("POST")
 	wsRouter.HandleFunc("/upload2", httpController.UploadPic2).Methods("POST")
 
+	wsRouter.HandleFunc("/cron/uids", httpController.AddUids).Methods("POST")
+	wsRouter.HandleFunc("/cron/uids", httpController.GetUids).Methods("GET")
+	wsRouter.HandleFunc("/cron/del/uids", httpController.DelUids).Methods("POST")
+
 }
