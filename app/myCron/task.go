@@ -12,8 +12,8 @@ func Start() {
 		tasks.MissionsWeek()
 		tasks.TimersWeek()
 	})
-	c.AddFunc("0 0 */1 * * ?", func() {
-		//c.AddFunc("* * * * * ?", func() {
+	//c.AddFunc("0 0 */1 * * ?", func() {
+	c.AddFunc("0 */5 * * * ?", func() {
 		tasks.GiftStart()
 	})
 	c.Start()

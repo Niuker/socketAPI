@@ -2,7 +2,6 @@ package tasks
 
 import (
 	"encoding/json"
-	"fmt"
 	"socketAPI/common"
 	"strconv"
 	"time"
@@ -13,7 +12,7 @@ func GiftStart() {
 
 	var cronuids []common.Cronuid
 
-	err := common.Db.Select(&cronuids, "select * from cronuid where exp_time < ? ", time.Now().Unix())
+	err := common.Db.Select(&cronuids, "select * from cronuid where exp_time > ? and del=0", time.Now().Unix())
 
 	if err != nil {
 		common.Log("crontab error", err)
@@ -28,7 +27,6 @@ func GiftStart() {
 }
 
 func getGift(uid int) {
-	fmt.Println(uid)
 	uidString := strconv.Itoa(uid)
 	sourceUrl := "https://cn.yhsvc.pandadastudio.com/captcha/apis/v1/apps/ninja3/versions/v1/captchas"
 	sourceParams := map[string]string{}
@@ -59,11 +57,16 @@ func getGift(uid int) {
 
 	codeUrl := "https://statistics.pandadastudio.com/player/giftCode"
 
-	codes := []string{"1", "2"}
+	var crongifts []common.CronGiftcode
+	err = common.Db.Select(&crongifts, "select * from crongiftcode where  del=0")
 
-	for _, code := range codes {
-		fmt.Println(uidString)
-		codeParams := map[string]string{"uid": uidString, "code": code, "token": token}
+	if err != nil {
+		common.Log("crontab error", err)
+		return
+	}
+
+	for _, crongift := range crongifts {
+		codeParams := map[string]string{"uid": uidString, "code": crongift.Code, "token": token}
 		codeBody, err := common.HttpGet(codeUrl, codeParams)
 		if err != nil {
 			common.Log("crontab error", err)
@@ -80,7 +83,7 @@ func getGift(uid int) {
 			return
 		}
 
-		common.Log("gift get", data)
+		common.Log("gift get", uidString, data)
 	}
 
 }
