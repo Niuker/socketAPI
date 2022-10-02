@@ -65,6 +65,13 @@ type Cronuid struct {
 	UserId  int `db:"user_id" json:"user_id"`
 	ExpTime int `db:"exp_time" json:"exp_time"`
 	Source  int `db:"source" json:"source"`
+	Del     int `db:"del" json:"del"`
+}
+
+type CronGiftcode struct {
+	Id   int    `db:"id" json:"id"`
+	Code string `db:"code" json:"code"`
+	Del  int    `db:"del" json:"del"`
 }
 
 type MissionsANDMissionField struct {

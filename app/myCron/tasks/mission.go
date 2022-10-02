@@ -7,10 +7,12 @@ import (
 )
 
 func MissionsWeek() {
+	common.Log("MissionsWeek start")
 	delMissions(time.Now().Add(-7*time.Hour*24*4).Unix(), false)
 
 }
 func MissionsDay() {
+	common.Log("MissionsDay start")
 	delMissions(time.Now().Add(-7*time.Hour*24).Unix(), true)
 }
 
@@ -25,6 +27,7 @@ func delMissions(t int64, isday bool) {
 
 	if err != nil {
 		common.Log("crontab error", err)
+		return
 	}
 	var mfids []int
 	for _, mf := range missionField {
@@ -36,11 +39,13 @@ func delMissions(t int64, isday bool) {
 			t, mfids)
 		if err != nil {
 			common.Log("crontab error", err)
+			return
 		}
 
 		res, err := common.Db.Exec(sql, inIds...)
 		if err != nil {
 			common.Log("crontab error", err)
+			return
 		}
 		common.Log("mission crontab", sql, inIds)
 
@@ -50,6 +55,7 @@ func delMissions(t int64, isday bool) {
 		}
 		if err != nil {
 			common.Log("crontab error", err)
+			return
 		}
 	}
 }

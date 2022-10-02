@@ -1,8 +1,10 @@
 package common
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"socketAPI/app/structure"
 	"time"
@@ -63,4 +65,46 @@ func GET(w http.ResponseWriter, r *http.Request, f func(map[string]string) (inte
 		msg, _ := json.Marshal(res)
 		w.Write(msg)
 	}
+}
+
+func HttpGet(url string, reqParams map[string]string) ([]byte, error) {
+	var tr *http.Transport
+	tr = &http.Transport{
+		MaxIdleConns: 200,
+	}
+
+	m := make(map[string]interface{})
+	data, err := json.Marshal(m)
+	if err != nil {
+		return nil, err
+	}
+	body := bytes.NewReader(data)
+
+	client := &http.Client{
+		Transport: tr,
+		Timeout:   5 * time.Second,
+	}
+
+	req, _ := http.NewRequest("GET", url, body)
+
+	params := req.URL.Query()
+
+	for k, reqParam := range reqParams {
+		params.Add(k, reqParam)
+	}
+	req.URL.RawQuery = params.Encode()
+
+	res, err := client.Do(req)
+
+	if res != nil {
+		defer res.Body.Close()
+	}
+	if err != nil {
+		return nil, err
+	}
+	resBody, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	return resBody, nil
 }
