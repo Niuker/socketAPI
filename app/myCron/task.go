@@ -13,7 +13,7 @@ func Start() {
 		tasks.TimersWeek()
 	})
 	c.AddFunc("0 0 */1 * * ?", func() {
-		//c.AddFunc("0 */5 * * * ?", func() {
+		//c.AddFunc("*/5 * * * * ?", func() {
 		tasks.GiftStart()
 	})
 	c.Start()

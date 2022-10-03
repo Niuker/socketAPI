@@ -66,24 +66,47 @@ func getGift(uid int) {
 	}
 
 	for _, crongift := range crongifts {
+		var cronuidgifts []common.CronUidgift
+		err = common.Db.Select(&cronuidgifts, "select * from cronuidgift where  code_id=? and user_id=?", crongift.Id, uidString)
+		if err != nil {
+			common.Log("crontab error", err)
+			return
+		}
+		if len(cronuidgifts) > 0 {
+			continue
+		}
+
 		codeParams := map[string]string{"uid": uidString, "code": crongift.Code, "token": token}
 		codeBody, err := common.HttpGet(codeUrl, codeParams)
 		if err != nil {
 			common.Log("crontab error", err)
 			return
 		}
-		var data map[string]interface{}
-		err = json.Unmarshal(codeBody, &data)
+		var resData map[string]interface{}
+		err = json.Unmarshal(codeBody, &resData)
 		if err != nil {
 			common.Log("crontab error", err)
 			return
 		}
-		if _, ok := data["code"]; !ok {
+		if _, ok := resData["code"]; !ok {
 			common.Log("crontab error data", err)
 			return
 		}
 
-		common.Log("gift get", uidString, data)
+		if resData["code"] == float64(425) || resData["code"] == float64(0) {
+			var CronUidgift common.CronUidgift
+
+			CronUidgift.CodeId = crongift.Id
+			CronUidgift.UserId = uid
+			_, err = common.Db.NamedExec(`INSERT INTO cronuidgift (code_id, user_id) 
+VALUES (:code_id, :user_id)`, CronUidgift)
+			if err != nil {
+				common.Log("crontab error", err)
+				return
+			}
+		}
+
+		common.Log("gift get", uidString, resData, resData["code"])
 	}
 
 }

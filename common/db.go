@@ -61,17 +61,24 @@ type Questions struct {
 }
 
 type Cronuid struct {
-	Id      int `db:"id" json:"id"`
-	UserId  int `db:"user_id" json:"user_id"`
-	ExpTime int `db:"exp_time" json:"exp_time"`
-	Source  int `db:"source" json:"source"`
-	Del     int `db:"del" json:"del"`
+	Id      int    `db:"id" json:"id"`
+	UserId  int    `db:"user_id" json:"user_id"`
+	ExpTime int    `db:"exp_time" json:"exp_time"`
+	Source  int    `db:"source" json:"source"`
+	Del     int    `db:"del" json:"del"`
+	Name    string `db:"name" json:"name"`
 }
 
 type CronGiftcode struct {
 	Id   int    `db:"id" json:"id"`
 	Code string `db:"code" json:"code"`
 	Del  int    `db:"del" json:"del"`
+}
+
+type CronUidgift struct {
+	Id     int `db:"id" json:"id"`
+	CodeId int `db:"code_id" json:"code_id"`
+	UserId int `db:"user_id" json:"user_id"`
 }
 
 type MissionsANDMissionField struct {

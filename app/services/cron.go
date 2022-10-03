@@ -28,7 +28,7 @@ func GetUids(req map[string]string) (interface{}, error) {
 	}
 	fmt.Println(time.Now().Unix())
 
-	err = common.Db.Select(&cronuids, "select user_id,exp_time,source from cronuid where del=0 and source=? and exp_time>? order by exp_time limit ?,200", req["source"], time.Now().Unix(), (p-1)*10)
+	err = common.Db.Select(&cronuids, "select user_id,exp_time,source,name from cronuid where del=0 and source=? and exp_time>? order by exp_time limit ?,200", req["source"], time.Now().Unix(), (p-1)*10)
 	if err != nil {
 		return nil, err
 	}
@@ -46,6 +46,9 @@ func AddUids(req map[string]string) (interface{}, error) {
 
 	if _, ok := req["source"]; !ok {
 		return nil, errors.New("source不能为空")
+	}
+	if _, ok := req["name"]; !ok {
+		return nil, errors.New("name不能为空")
 	}
 
 	var cronuid common.Cronuid
@@ -69,16 +72,21 @@ func AddUids(req map[string]string) (interface{}, error) {
 		return nil, err
 	}
 	if len(cronuids) > 0 {
-		_, err = common.Db.Exec("update cronuid set exp_time=?,source=? where user_id = ? and del=0)", exp_time, source, user_id)
+		_, err = common.Db.Exec("update cronuid set exp_time=?,source=?,name=? where user_id = ? and del=0", exp_time, source, req["name"], user_id)
+		if err != nil {
+			return nil, err
+		}
+
 		return cronuids[0], nil
 	}
 
 	cronuid.UserId = user_id
 	cronuid.Source = source
 	cronuid.ExpTime = exp_time
+	cronuid.Name = req["name"]
 	cronuid.Del = 0
-	_, err = common.Db.NamedExec(`INSERT INTO cronuid (user_id, source, exp_time,del) 
-VALUES (:user_id, :source, :exp_time, :del)`, cronuid)
+	_, err = common.Db.NamedExec(`INSERT INTO cronuid (user_id, source, exp_time,del,name) 
+VALUES (:user_id, :source, :exp_time, :del, :name)`, cronuid)
 	if err != nil {
 		return nil, err
 	}
