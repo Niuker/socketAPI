@@ -29,7 +29,6 @@ func POST(w http.ResponseWriter, r *http.Request, f func(map[string]string) (int
 	}
 
 	if err != nil {
-		w.WriteHeader(400)
 		res.Code = 1
 		res.Error = err.Error()
 		msg, _ := json.Marshal(res)
