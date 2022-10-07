@@ -120,7 +120,13 @@ func handleConnection(conn net.Conn, c map[string]map[string]chan structure.ReqD
 		return
 	}
 
-	if _, ok := raw[0].Params["user_id"]; (!ok) || (len(raw) == 0) {
+	if len(raw) < 1 {
+		common.SendConn(conn, "Please set id before use server")
+		conn.Close()
+		return
+	}
+
+	if _, ok := raw[0].Params["user_id"]; !ok {
 		common.SendConn(conn, "please set id before use server")
 		conn.Close()
 		return
