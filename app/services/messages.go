@@ -23,9 +23,9 @@ func GetMessages(req map[string]string) (interface{}, error) {
 	}
 
 	if title, ok := req["title"]; ok {
-		err = common.Db.Select(&messages, "select * from message where title=? order by time limit ?,200", title, (p-1)*10)
+		err = common.Db.Select(&messages, "select * from message where title=? order by time limit ?,100", title, (p-1)*100)
 	} else {
-		err = common.Db.Select(&messages, "select * from message  order by time limit ?,200", (p-1)*10)
+		err = common.Db.Select(&messages, "select * from message  order by time limit ?,100", (p-1)*100)
 	}
 	if err != nil {
 		return nil, err

@@ -28,7 +28,7 @@ func GetUids(req map[string]string) (interface{}, error) {
 	}
 	fmt.Println(time.Now().Unix())
 
-	err = common.Db.Select(&cronuids, "select user_id,exp_time,source,name from cronuid where del=0 and source=? and exp_time>? order by exp_time limit ?,200", req["source"], time.Now().Unix(), (p-1)*10)
+	err = common.Db.Select(&cronuids, "select user_id,exp_time,source,name from cronuid where del=0 and source=? and exp_time>? order by exp_time limit ?,100", req["source"], time.Now().Unix(), (p-1)*100)
 	if err != nil {
 		return nil, err
 	}
