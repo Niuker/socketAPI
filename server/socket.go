@@ -64,6 +64,11 @@ func readConnAndSendChan(conn net.Conn, c map[string]map[string]chan structure.R
 
 }
 func reviceContext(conn net.Conn, c map[string]map[string]chan structure.ReqData, mid string) {
+	defer func() {
+		if err := recover(); err != nil {
+			common.Log("recover error reviceContext:", err)
+		}
+	}()
 	for {
 		if c[mid] == nil {
 			c[mid] = make(map[string]chan structure.ReqData)
@@ -111,6 +116,12 @@ func prodANDcons(req structure.ReqData, conn net.Conn, c map[string]map[string]c
 }
 
 func handleConnection(conn net.Conn, c map[string]map[string]chan structure.ReqData) {
+	defer func() {
+		if err := recover(); err != nil {
+			common.Log("recover error handleConnection:", err)
+		}
+	}()
+
 	mid := ""
 	c[mid] = nil
 	raw, err := common.ReadConn(conn)
