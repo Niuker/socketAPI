@@ -12,7 +12,7 @@ func UploadPic1(req map[string]string) (interface{}, error) {
 	if _, ok := req["prestr"]; !ok {
 		return nil, errors.New("prestr can not be empty")
 	}
-	return nil, common.UploadByJson(req["image"], "pic1", req["prestr"])
+	return nil, common.UploadByJson(req["image"], "pic1", req["prestr"]+".png")
 }
 
 func UploadPic2(req map[string]string) (interface{}, error) {
@@ -22,5 +22,5 @@ func UploadPic2(req map[string]string) (interface{}, error) {
 	if _, ok := req["prestr"]; !ok {
 		return nil, errors.New("prestr can not be empty")
 	}
-	return nil, common.UploadByJson(req["image"], "pic2", req["prestr"])
+	return nil, common.UploadByJson(req["image"], "pic2", req["prestr"]+".png")
 }
