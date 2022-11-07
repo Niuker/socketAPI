@@ -20,6 +20,7 @@ func initTimer(id int) error {
 		common.Log("exec failed, ", err)
 		return errors.New("get timers error")
 	}
+
 	err = common.Db.Select(&timerField, "select * from timer_field")
 	if err != nil {
 		common.Log("exec failed, ", err)
@@ -43,8 +44,8 @@ outside:
 		tmpTimer.UpdateTime = int(time.Now().Unix())
 		insertTimers = append(insertTimers, tmpTimer)
 	}
-	_, err = common.Db.NamedExec(`INSERT INTO timers (user_id, timer_field_id, value,update_time,date) 
-VALUES (:user_id, :timer_field_id, :value, :update_time, :date)`, insertTimers)
+	_, err = common.Db.NamedExec(`INSERT INTO timers (user_id, timer_field_id, value,update_time) 
+VALUES (:user_id, :timer_field_id, :value, :update_time)`, insertTimers)
 	if err != nil {
 		common.Log("exec failed, ", err)
 		return errors.New("insert timers field error")
