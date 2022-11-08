@@ -57,7 +57,7 @@ func GetMachines(req map[string]string) (interface{}, error) {
 	}
 
 	for k, m := range machines {
-		machines[k].Mid, err = encr.ECBEncrypt(config.MyConfig.ENCR.Desckey, strconv.Itoa(m.Id))
+		machines[k].Mid, err = encr.ECBEncrypt(config.MyConfig.ENCR.Desckey, strconv.Itoa(m.UserId))
 		if err != nil {
 			return nil, err
 		}
