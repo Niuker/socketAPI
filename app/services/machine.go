@@ -15,6 +15,10 @@ func SetMachines(req map[string]string) (interface{}, error) {
 	if _, ok := req["machine_code"]; !ok {
 		return nil, errors.New("machine_code不能为空")
 	}
+	machineCode, err := encr.ECBDecrypter(config.MyConfig.ENCR.Desckey, req["machine_code"])
+	if machineCode == "" || err != nil {
+		return nil, errors.New("本次machine_code解密失败")
+	}
 	mid, err := encr.ECBDecrypter(config.MyConfig.ENCR.Desckey, req["user_id"])
 	if mid == "" || err != nil {
 		return nil, errors.New("本次user解密失败")
@@ -26,11 +30,11 @@ func SetMachines(req map[string]string) (interface{}, error) {
 
 	var machines []common.Machines
 	var machine common.Machines
-	err = common.Db.Select(&machines, "select id from machines where machine_code = ? and user_id = ?", req["machine_code"], id)
+	err = common.Db.Select(&machines, "select id from machines where machine_code = ? and user_id = ?", machineCode, id)
 	if err != nil {
 		return nil, err
 	}
-	machine.MachineCode = req["machine_code"]
+	machine.MachineCode = machineCode
 	machine.UserId = id
 	if len(machines) < 1 {
 		_, err = common.Db.NamedExec(`INSERT INTO machines (machine_code, user_id) 
@@ -48,10 +52,14 @@ func GetMachines(req map[string]string) (interface{}, error) {
 	if _, ok := req["machine_code"]; !ok {
 		return nil, errors.New("machine_code不能为空")
 	}
+	machineCode, err := encr.ECBDecrypter(config.MyConfig.ENCR.Desckey, req["machine_code"])
+	if machineCode == "" || err != nil {
+		return nil, errors.New("本次machine_code解密失败")
+	}
 
 	var machines []common.Machines
 
-	err := common.Db.Select(&machines, "select * from machines where machine_code = ? ", req["machine_code"])
+	err = common.Db.Select(&machines, "select * from machines where machine_code = ? ", machineCode)
 	if err != nil {
 		return nil, err
 	}
