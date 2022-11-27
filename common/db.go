@@ -81,6 +81,20 @@ type CronUidgift struct {
 	UserId int `db:"user_id" json:"user_id"`
 }
 
+type UserConfigAccount struct {
+	Id          int    `db:"id" json:"id"`
+	MachineCode string `db:"machine_code" json:"machine_code"`
+	Account     string `db:"account" json:"account"`
+}
+
+type UserConfig struct {
+	Id        int    `db:"id" json:"id"`
+	AccountId int    `db:"account_id" json:"account_id"`
+	Config    string `db:"config" json:"config"`
+	Name      string `db:"name" json:"name"`
+	Del       string `db:"del" json:"del"`
+}
+
 type MissionsANDMissionField struct {
 	Missions
 	MissionField

@@ -87,8 +87,6 @@ func DelMessages(req map[string]string) (interface{}, error) {
 	}
 	fmt.Printf("%T,,,,%s", req["id"], req["id"])
 	ids := strings.Split(req["id"], ",")
-	fmt.Println()
-	fmt.Println(ids)
 
 	if len(ids) > 200 || len(ids) < 1 {
 		return nil, errors.New("id不能超过200")
