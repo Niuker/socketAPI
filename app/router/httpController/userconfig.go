@@ -6,16 +6,12 @@ import (
 	"socketAPI/common"
 )
 
-func PutAccount(w http.ResponseWriter, r *http.Request) {
-	common.POST(w, r, services.PutAccount, true)
+func Account(w http.ResponseWriter, r *http.Request) {
+	common.POST(w, r, services.Account, true)
 }
 
 func AddUserConfig(w http.ResponseWriter, r *http.Request) {
 	common.POST(w, r, services.AddUserConfig, true)
-}
-
-func GetConfigList(w http.ResponseWriter, r *http.Request) {
-	common.GET(w, r, services.GetConfigList, true)
 }
 
 func GetConfig(w http.ResponseWriter, r *http.Request) {
