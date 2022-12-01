@@ -149,7 +149,7 @@ func GetConfig(req map[string]string) (interface{}, error) {
 		return nil, err
 	}
 	var configs []common.UserConfig
-	err = common.Db.Select(&configs, "select * from user_config where id = ? and del=0 and user_id = ?", req["id"], accounts[0].Id)
+	err = common.Db.Select(&configs, "select * from user_config where name = ? and del=0 and user_id = ?", req["id"], accounts[0].Id)
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +174,7 @@ func DelConfig(req map[string]string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, err = common.Db.Exec("update user_config set `del`=1 where id=? and user_id = ?", req["id"], accounts[0].Id)
+	_, err = common.Db.Exec("update user_config set `del`=1 where name=? and user_id = ?", req["id"], accounts[0].Id)
 	if err != nil {
 		return nil, err
 	}
