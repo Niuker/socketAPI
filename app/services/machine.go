@@ -30,19 +30,55 @@ func SetMachines(req map[string]string) (interface{}, error) {
 
 	var machines []common.Machines
 	var machine common.Machines
-	err = common.Db.Select(&machines, "select id from machines where machine_code = ? and user_id = ?", machineCode, id)
+	err = common.Db.Select(&machines, "select id,machine_code from machines where  user_id = ?", id)
 	if err != nil {
 		return nil, err
 	}
+
+	if len(machines) > 1 {
+		return nil, errors.New("machine数据异常")
+	}
+
 	machine.MachineCode = machineCode
 	machine.UserId = id
+
+	if len(machines) == 1 {
+		if machines[0].MachineCode == machineCode {
+			return machine, nil
+		} else {
+			// del machines missions timers
+			_, err = common.Db.Exec("delete from machines where `user_id` = ?", id)
+			if err != nil {
+				common.Log("del machines error", err)
+				return nil, err
+			}
+			_, err = common.Db.Exec("delete from missions where `user_id` = ?", id)
+			if err != nil {
+				common.Log("del missions error", err)
+				return nil, err
+			}
+			_, err = common.Db.Exec("delete from timers where `user_id` = ?", id)
+			if err != nil {
+				common.Log("del timers error", err)
+				return nil, err
+			}
+
+			_, err = common.Db.NamedExec(`INSERT INTO machines (machine_code, user_id) 
+VALUES (:machine_code, :user_id)`, machine)
+			if err != nil {
+				return nil, err
+			}
+			return machine, nil
+
+		}
+	}
+
 	if len(machines) < 1 {
 		_, err = common.Db.NamedExec(`INSERT INTO machines (machine_code, user_id) 
 VALUES (:machine_code, :user_id)`, machine)
-	}
-
-	if err != nil {
-		return nil, err
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return machine, nil
