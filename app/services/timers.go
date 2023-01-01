@@ -91,6 +91,24 @@ func GetTimers(req map[string]string) (interface{}, error) {
 	return m, nil
 }
 
+func SetTimersWithMachine(req map[string]string) (interface{}, error) {
+	err := VerifyMachine(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return SetTimers(req)
+}
+
+func GetTimersWithMachine(req map[string]string) (interface{}, error) {
+	err := VerifyMachine(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return GetTimers(req)
+}
+
 func SetTimers(req map[string]string) (interface{}, error) {
 	if _, ok := req["user_id"]; !ok {
 		return nil, errors.New("user不能为空")

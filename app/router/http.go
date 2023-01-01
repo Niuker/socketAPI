@@ -7,11 +7,11 @@ import (
 
 func RegisterRoutes(r *mux.Router) {
 	wsRouter := r.PathPrefix("/").Subrouter()
-	wsRouter.HandleFunc("/missions", httpController.GetMissions).Methods("GET")
-	wsRouter.HandleFunc("/missions", httpController.SetMissions).Methods("POST")
+	wsRouter.HandleFunc("/missions", httpController.GetMissionsWithMachine).Methods("GET")
+	wsRouter.HandleFunc("/missions", httpController.SetMissionsWithMachine).Methods("POST")
 
-	wsRouter.HandleFunc("/timers", httpController.GetTimers).Methods("GET")
-	wsRouter.HandleFunc("/timers", httpController.SetTimers).Methods("POST")
+	wsRouter.HandleFunc("/timers", httpController.GetTimersWithMachine).Methods("GET")
+	wsRouter.HandleFunc("/timers", httpController.SetTimersWithMachine).Methods("POST")
 
 	wsRouter.HandleFunc("/messages", httpController.GetMessages).Methods("GET")
 	wsRouter.HandleFunc("/messages", httpController.AddMessages).Methods("POST")

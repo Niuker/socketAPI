@@ -6,10 +6,10 @@ import (
 	"socketAPI/common"
 )
 
-func SetMissions(w http.ResponseWriter, r *http.Request) {
-	common.POST(w, r, services.SetMissions, true)
+func SetMissionsWithMachine(w http.ResponseWriter, r *http.Request) {
+	common.POST(w, r, services.SetMissionsWithMachine, true)
 }
 
-func GetMissions(w http.ResponseWriter, r *http.Request) {
-	common.GET(w, r, services.GetMissions, true)
+func GetMissionsWithMachine(w http.ResponseWriter, r *http.Request) {
+	common.GET(w, r, services.GetMissionsWithMachine, true)
 }

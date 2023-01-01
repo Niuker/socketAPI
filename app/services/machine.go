@@ -111,3 +111,30 @@ func GetMachines(req map[string]string) (interface{}, error) {
 	}
 	return machines, nil
 }
+
+func VerifyMachine(req map[string]string) error {
+	if _, ok := req["user_id"]; !ok {
+		return errors.New("user不能为空")
+	}
+	if _, ok := req["machine_code"]; !ok {
+		return errors.New("machine_code不能为空")
+	}
+
+	mid, err := encr.ECBDecrypter(config.MyConfig.ENCR.Desckey, req["user_id"])
+	if mid == "" || err != nil {
+		return errors.New("本次user解密失败")
+	}
+	id, err := strconv.Atoi(mid)
+	if err != nil {
+		return errors.New("id错误")
+	}
+
+	var machines []common.Machines
+
+	err = common.Db.Select(&machines, "select * from machines where machine_code = ? and user_id = ? ", req["machine_code"], id)
+
+	if len(machines) < 1 {
+		return errors.New("machine不存在")
+	}
+	return nil
+}

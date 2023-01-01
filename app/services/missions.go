@@ -103,6 +103,24 @@ func GetMissions(req map[string]string) (interface{}, error) {
 	return m, nil
 }
 
+func SetMissionsWithMachine(req map[string]string) (interface{}, error) {
+	err := VerifyMachine(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return SetMissions(req)
+}
+
+func GetMissionsWithMachine(req map[string]string) (interface{}, error) {
+	err := VerifyMachine(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return GetMissions(req)
+}
+
 func SetMissions(req map[string]string) (interface{}, error) {
 	if _, ok := req["user_id"]; !ok {
 		return nil, errors.New("user不能为空")

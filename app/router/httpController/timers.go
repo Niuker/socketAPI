@@ -6,10 +6,10 @@ import (
 	"socketAPI/common"
 )
 
-func SetTimers(w http.ResponseWriter, r *http.Request) {
-	common.POST(w, r, services.SetTimers, true)
+func SetTimersWithMachine(w http.ResponseWriter, r *http.Request) {
+	common.POST(w, r, services.SetTimersWithMachine, true)
 }
 
-func GetTimers(w http.ResponseWriter, r *http.Request) {
-	common.GET(w, r, services.GetTimers, true)
+func GetTimersWithMachine(w http.ResponseWriter, r *http.Request) {
+	common.GET(w, r, services.GetTimersWithMachine, true)
 }
