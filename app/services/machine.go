@@ -120,6 +120,11 @@ func VerifyMachine(req map[string]string) error {
 		return errors.New("machine_code不能为空")
 	}
 
+	mcode, err := encr.ECBDecrypter(config.MyConfig.ENCR.Desckey, req["machine_code"])
+	if mcode == "" || err != nil {
+		return errors.New("本次macine_code解密失败")
+	}
+
 	mid, err := encr.ECBDecrypter(config.MyConfig.ENCR.Desckey, req["user_id"])
 	if mid == "" || err != nil {
 		return errors.New("本次user解密失败")
@@ -131,7 +136,7 @@ func VerifyMachine(req map[string]string) error {
 
 	var machines []common.Machines
 
-	err = common.Db.Select(&machines, "select * from machines where machine_code = ? and user_id = ? ", req["machine_code"], id)
+	err = common.Db.Select(&machines, "select * from machines where machine_code = ? and user_id = ? ", mcode, id)
 
 	if len(machines) < 1 {
 		return errors.New("machine不存在")
