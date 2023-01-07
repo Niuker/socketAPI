@@ -33,7 +33,7 @@ func ReadConn(conn net.Conn) ([]structure.ReqData, error) {
 
 	var reqs []structure.ReqData
 
-	buffer := make([]byte, 2048)
+	buffer := make([]byte, 204800)
 
 	n, err := conn.Read(buffer) //No3:read
 	if err != nil {

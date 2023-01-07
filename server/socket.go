@@ -63,12 +63,13 @@ func readConnAndSendChan(conn net.Conn, c map[string]map[string]chan structure.R
 	}
 
 }
-func reviceContext(conn net.Conn, c map[string]map[string]chan structure.ReqData, mid string) {
+func reviceContext(conn net.Conn, c map[string]map[string]chan structure.ReqData, mid string) error {
 	defer func() {
 		if err := recover(); err != nil {
 			common.Log("recover error reviceContext:", err)
 		}
 	}()
+	req := structure.ReqData{}
 	for {
 		if c[mid] == nil {
 			c[mid] = make(map[string]chan structure.ReqData)
@@ -76,17 +77,23 @@ func reviceContext(conn net.Conn, c map[string]map[string]chan structure.ReqData
 		if c[mid]["revice"] == nil {
 			c[mid]["revice"] = make(chan structure.ReqData)
 		}
-
-		req := <-c[mid]["revice"]
-		res := structure.ResData{Data: make(map[string]string), Timestamp: int(time.Now().Unix())}
-		res.Reqid = req.Reqid
-		res.Data = req.Params
-		resJson, err := json.Marshal(res)
-		if err != nil {
-			common.SendConn(conn, err.Error())
-		} else {
-			common.SendConn(conn, string(resJson))
+		if req.Params != nil {
+			res := structure.ResData{Data: make(map[string]string), Timestamp: int(time.Now().Unix())}
+			res.Reqid = req.Reqid
+			res.Data = req.Params
+			resJson, err := json.Marshal(res)
+			if err != nil {
+				common.SendConn(conn, err.Error())
+			} else {
+				err = common.SendConn(conn, string(resJson))
+				if err != nil {
+					c[mid]["revice"] <- req
+				}
+			}
 		}
+
+		req = <-c[mid]["revice"]
+
 	}
 
 }
