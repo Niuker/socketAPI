@@ -40,6 +40,11 @@ func readConnAndSendChan(conn net.Conn, c map[string]map[string]chan structure.R
 		if err != nil {
 			common.Log("readConnAndSendChan close", err)
 			conn.Close()
+			go func() {
+				q := structure.ReqData{}
+				q.Quit = 1
+				c[mid]["revice"] <- q
+			}()
 			return
 		}
 		for _, req := range raw {
@@ -70,12 +75,17 @@ func reviceContext(conn net.Conn, c map[string]map[string]chan structure.ReqData
 		}
 	}()
 	req := structure.ReqData{}
+
 	for {
 		if c[mid] == nil {
 			c[mid] = make(map[string]chan structure.ReqData)
 		}
 		if c[mid]["revice"] == nil {
 			c[mid]["revice"] = make(chan structure.ReqData)
+		}
+		req = <-c[mid]["revice"]
+		if req.Quit == 1 {
+			return nil
 		}
 		if req.Params != nil {
 			res := structure.ResData{Data: make(map[string]string), Timestamp: int(time.Now().Unix())}
@@ -86,14 +96,8 @@ func reviceContext(conn net.Conn, c map[string]map[string]chan structure.ReqData
 				common.SendConn(conn, err.Error())
 			} else {
 				err = common.SendConn(conn, string(resJson))
-				if err != nil {
-					c[mid]["revice"] <- req
-				}
 			}
 		}
-
-		req = <-c[mid]["revice"]
-
 	}
 
 }

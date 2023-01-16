@@ -5,4 +5,5 @@ type ReqData struct {
 	Params    map[string]string `json:"params"`
 	Timestamp int               `json:"timestamp"`
 	Reqid     string            `json:"reqid"`
+	Quit      int               `json:"quit"`
 }
