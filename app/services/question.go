@@ -8,27 +8,27 @@ import (
 )
 
 func getQuestionUseMD5(md5 string) (string, error) {
-	var questions []common.Questions
-	err := common.Db.Select(&questions, "select * from questions where md5=?", md5)
+	var questions []common.QuestionsANDMd5
+	err := common.Db.Select(&questions, "select * from question_md5 as qm LEFT JOIN questions as q ON qm.question = q.question where qm.md5=?", md5)
 	if err != nil {
 		return "", errors.New("get question MD5 error")
 	}
 	if len(questions) > 0 {
 		return questions[0].Answer, nil
 	}
-	return "", nil
+	return "", errors.New("no md5")
 }
 
 func getQuestion(ques string) (string, error) {
 	var questions []common.Questions
 	err := common.Db.Select(&questions, "select * from questions where question=?", ques)
 	if err != nil {
-		return "", errors.New("get question MD5 error")
+		return "", errors.New("get question error")
 	}
 	if len(questions) > 0 {
 		return questions[0].Answer, nil
 	}
-	return "", nil
+	return "", errors.New("no question")
 }
 
 func UploadQuestion(req map[string]string) (interface{}, error) {
@@ -53,9 +53,10 @@ func UploadQuestion(req map[string]string) (interface{}, error) {
 
 	answer, err := getQuestionUseMD5(req["md5"])
 	if err != nil {
-		return nil, err
-	}
-	if answer != "" {
+		if err.Error() != "no md5" {
+			return nil, err
+		}
+	} else {
 		res["answer"] = answer
 		return res, nil
 	}
@@ -66,10 +67,20 @@ func UploadQuestion(req map[string]string) (interface{}, error) {
 	}
 	answer, err = getQuestion(question)
 	if err != nil {
-		return nil, err
-	}
-	if answer != "" {
+		if err.Error() != "no question" {
+			return nil, err
+		}
+	} else {
+		var insertQuestionMd5 common.QuestionMd5
+		insertQuestionMd5.Question = question
+		insertQuestionMd5.Md5 = req["md5"]
+		_, err = common.Db.NamedExec(`INSERT INTO question_md5 (question,md5)
+VALUES (:question, :md5)`, insertQuestionMd5)
+		if err != nil {
+			return nil, err
+		}
 		res["answer"] = answer
+		return res, nil
 	}
 
 	select1, err := tesseract.GetWordOfPic(strings.Replace(req["select1"], "_JH_", "+", -1))
@@ -86,15 +97,24 @@ func UploadQuestion(req map[string]string) (interface{}, error) {
 	}
 
 	var insertQuestion common.Questions
+	var insertQuestionMd5 common.QuestionMd5
+
 	insertQuestion.Question = question
 	insertQuestion.Select1 = select1
 	insertQuestion.Select2 = select2
 	insertQuestion.Select3 = select3
-	insertQuestion.Md5 = req["md5"]
 	insertQuestion.Answer = res["answer"]
 
-	_, err = common.Db.NamedExec(`INSERT INTO questions (question, select1, select2,select3,md5)
-VALUES (:question, :select1, :select2, :select3, :md5)`, insertQuestion)
+	insertQuestionMd5.Question = question
+	insertQuestionMd5.Md5 = req["md5"]
+
+	_, err = common.Db.NamedExec(`INSERT INTO questions (question, select1, select2,select3)
+VALUES (:question, :select1, :select2, :select3)`, insertQuestion)
+	if err != nil {
+		return nil, err
+	}
+	_, err = common.Db.NamedExec(`INSERT INTO question_md5 (question,md5)
+VALUES (:question, :md5)`, insertQuestionMd5)
 	if err != nil {
 		return nil, err
 	}

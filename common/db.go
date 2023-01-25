@@ -55,8 +55,13 @@ type Questions struct {
 	Select1  string `db:"select1" json:"select1"`
 	Select2  string `db:"select2" json:"select2"`
 	Select3  string `db:"select3" json:"select3"`
-	Md5      string `db:"md5" json:"md5"`
 	Answer   string `db:"answer" json:"answer"`
+}
+
+type QuestionMd5 struct {
+	Id       int    `db:"id" json:"id"`
+	Question string `db:"question" json:"question"`
+	Md5      string `db:"md5" json:"md5"`
 }
 
 type Cronuid struct {
@@ -101,6 +106,11 @@ type MissionsANDMissionField struct {
 type TimersANDTimerField struct {
 	Timers
 	TimerField
+}
+
+type QuestionsANDMd5 struct {
+	Questions
+	QuestionMd5
 }
 
 type MachinesANDMid struct {
