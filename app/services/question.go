@@ -44,9 +44,7 @@ func UploadQuestion(req map[string]string) (interface{}, error) {
 	if _, ok := req["select3"]; !ok {
 		return nil, errors.New("select3 can not be empty")
 	}
-	if _, ok := req["select4"]; !ok {
-		return nil, errors.New("select4 can not be empty")
-	}
+
 	if _, ok := req["md5"]; !ok {
 		return nil, errors.New("md5 can not be empty")
 	}
@@ -86,22 +84,17 @@ func UploadQuestion(req map[string]string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	select4, err := tesseract.GetWordOfPic(strings.Replace(req["select4"], "_JH_", "+", -1))
-	if err != nil {
-		return nil, err
-	}
 
 	var insertQuestion common.Questions
 	insertQuestion.Question = question
 	insertQuestion.Select1 = select1
 	insertQuestion.Select2 = select2
 	insertQuestion.Select3 = select3
-	insertQuestion.Select4 = select4
 	insertQuestion.Md5 = req["md5"]
 	insertQuestion.Answer = res["answer"]
 
-	_, err = common.Db.NamedExec(`INSERT INTO questions (question, select1, select2,select3,select4,md5)
-VALUES (:question, :select1, :select2, :select3, :select4, :md5)`, insertQuestion)
+	_, err = common.Db.NamedExec(`INSERT INTO questions (question, select1, select2,select3,md5)
+VALUES (:question, :select1, :select2, :select3, :md5)`, insertQuestion)
 	if err != nil {
 		return nil, err
 	}

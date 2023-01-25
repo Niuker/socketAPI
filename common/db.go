@@ -55,7 +55,6 @@ type Questions struct {
 	Select1  string `db:"select1" json:"select1"`
 	Select2  string `db:"select2" json:"select2"`
 	Select3  string `db:"select3" json:"select3"`
-	Select4  string `db:"select4" json:"select4"`
 	Md5      string `db:"md5" json:"md5"`
 	Answer   string `db:"answer" json:"answer"`
 }
