@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"regexp"
 	"socketAPI/app/tesseract"
 	"socketAPI/common"
 	"strings"
@@ -65,14 +66,20 @@ func UploadQuestion(req map[string]string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	answer, err = getQuestion(question)
+	re, err := regexp.Compile("^第[\\s\\S]{1,5}问\\s?\\S?")
+	ques := re.ReplaceAllString(question, "")
+
+	if err != nil {
+		return nil, err
+	}
+	answer, err = getQuestion(ques)
 	if err != nil {
 		if err.Error() != "no question" {
 			return nil, err
 		}
 	} else {
 		var insertQuestionMd5 common.QuestionMd5
-		insertQuestionMd5.Question = question
+		insertQuestionMd5.Question = ques
 		insertQuestionMd5.Md5 = req["md5"]
 		_, err = common.Db.NamedExec(`INSERT INTO question_md5 (question,md5)
 VALUES (:question, :md5)`, insertQuestionMd5)
@@ -99,13 +106,13 @@ VALUES (:question, :md5)`, insertQuestionMd5)
 	var insertQuestion common.Questions
 	var insertQuestionMd5 common.QuestionMd5
 
-	insertQuestion.Question = question
+	insertQuestion.Question = ques
 	insertQuestion.Select1 = select1
 	insertQuestion.Select2 = select2
 	insertQuestion.Select3 = select3
 	insertQuestion.Answer = res["answer"]
 
-	insertQuestionMd5.Question = question
+	insertQuestionMd5.Question = ques
 	insertQuestionMd5.Md5 = req["md5"]
 
 	_, err = common.Db.NamedExec(`INSERT INTO questions (question, select1, select2,select3)
