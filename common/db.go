@@ -59,9 +59,10 @@ type Questions struct {
 }
 
 type QuestionMd5 struct {
-	Id       int    `db:"id" json:"id"`
-	Question string `db:"question" json:"question"`
-	Md5      string `db:"md5" json:"md5"`
+	Id         int    `db:"id" json:"id"`
+	Question   string `db:"question" json:"question"`
+	Md5        string `db:"md5" json:"md5"`
+	UpdateTime int    `db:"update_time" json:"update_time"`
 }
 
 type Cronuid struct {

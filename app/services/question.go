@@ -6,6 +6,7 @@ import (
 	"socketAPI/app/tesseract"
 	"socketAPI/common"
 	"strings"
+	"time"
 )
 
 func getQuestionUseMD5(md5 string) (string, error) {
@@ -81,8 +82,9 @@ func UploadQuestion(req map[string]string) (interface{}, error) {
 		var insertQuestionMd5 common.QuestionMd5
 		insertQuestionMd5.Question = ques
 		insertQuestionMd5.Md5 = req["md5"]
-		_, err = common.Db.NamedExec(`INSERT INTO question_md5 (question,md5)
-VALUES (:question, :md5)`, insertQuestionMd5)
+		insertQuestionMd5.UpdateTime = int(time.Now().Unix())
+		_, err = common.Db.NamedExec(`INSERT INTO question_md5 (question,md5,update_time)
+VALUES (:question, :md5, :update_time)`, insertQuestionMd5)
 		if err != nil {
 			return nil, err
 		}
@@ -114,14 +116,15 @@ VALUES (:question, :md5)`, insertQuestionMd5)
 
 	insertQuestionMd5.Question = ques
 	insertQuestionMd5.Md5 = req["md5"]
+	insertQuestionMd5.UpdateTime = int(time.Now().Unix())
 
 	_, err = common.Db.NamedExec(`INSERT INTO questions (question, select1, select2,select3)
 VALUES (:question, :select1, :select2, :select3)`, insertQuestion)
 	if err != nil {
 		return nil, err
 	}
-	_, err = common.Db.NamedExec(`INSERT INTO question_md5 (question,md5)
-VALUES (:question, :md5)`, insertQuestionMd5)
+	_, err = common.Db.NamedExec(`INSERT INTO question_md5 (question,md5,update_time)
+VALUES (:question, :md5, :update_time)`, insertQuestionMd5)
 	if err != nil {
 		return nil, err
 	}
