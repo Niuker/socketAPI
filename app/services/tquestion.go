@@ -1,5 +1,9 @@
 package services
 
+//func UploadTQuestion(req map[string]string) (interface{}, error) {
+//	return nil, nil
+//}
+
 import (
 	"context"
 	"errors"
@@ -14,6 +18,18 @@ import (
 	"strings"
 	"time"
 )
+
+func getQuestionAndAnswer(ques string, s1 string, s2 string, s3 string) (string, error) {
+	var questions []common.Questions
+	err := common.Db.Select(&questions, "select * from questions where=? and select1=? and select2=? and select3=?", ques, s1, s2, s3)
+	if err != nil {
+		return "", errors.New("get question error")
+	}
+	if len(questions) > 0 {
+		return questions[0].Answer, nil
+	}
+	return "", errors.New("no question")
+}
 
 func UploadTQuestion(req map[string]string) (interface{}, error) {
 	if _, ok := req["pic"]; !ok {
@@ -54,15 +70,15 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 	if l < 4 {
 		return nil, errors.New("pic res text < 4")
 	}
-	text := make([]*string, l)
+	text := make([]string, l)
 	for k, v := range response.Response.TextDetections {
-		text[l-k-1] = v.DetectedText
+		text[l-k-1] = common.StringStrip(*v.DetectedText)
 	}
 
 	var q string
 	for kk, vv := range text {
 		if kk > 2 {
-			q = *vv + q
+			q = vv + q
 		}
 	}
 	regQ, err := regexp.Compile("^第[\\s\\S]{0,5}问\\s?\\S?")
@@ -82,15 +98,15 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 		return nil, err
 	}
 
-	if !regS3.Match([]byte(*text[0])) {
+	if !regS3.Match([]byte(text[0])) {
 		common.Log("regS3 match error", response.ToJsonString())
 		return nil, errors.New("regS3 match error")
 	}
-	if !regS2.Match([]byte(*text[1])) {
+	if !regS2.Match([]byte(text[1])) {
 		common.Log("regS2 match error", response.ToJsonString())
 		return nil, errors.New("regS2 match error")
 	}
-	if !regS1.Match([]byte(*text[2])) {
+	if !regS1.Match([]byte(text[2])) {
 		common.Log("regS1 match error", response.ToJsonString())
 		return nil, errors.New("regS1 match error")
 	}
@@ -113,7 +129,7 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 		return res, nil
 	}
 
-	answer, err = getQuestion(ques)
+	answer, err = getQuestionAndAnswer(ques, text[2], text[1], text[0])
 	if err != nil {
 		if err.Error() != "no question" {
 			return nil, err
@@ -137,9 +153,9 @@ VALUES (:question, :md5,:update_time)`, insertQuestionMd5)
 	var insertQuestionMd5 common.QuestionMd5
 
 	insertQuestion.Question = ques
-	insertQuestion.Select1 = *text[2]
-	insertQuestion.Select2 = *text[1]
-	insertQuestion.Select3 = *text[0]
+	insertQuestion.Select1 = text[2]
+	insertQuestion.Select2 = text[1]
+	insertQuestion.Select3 = text[0]
 	insertQuestion.Answer = ""
 
 	insertQuestionMd5.Question = ques
