@@ -21,9 +21,9 @@ import (
 
 func getQuestionAndAnswer(ques string, s1 string, s2 string, s3 string) (string, error) {
 	var questions []common.Questions
-	err := common.Db.Select(&questions, "select * from questions where=? and select1=? and select2=? and select3=?", ques, s1, s2, s3)
+	err := common.Db.Select(&questions, "select * from questions where question=? and select1=? and select2=? and select3=?", ques, s1, s2, s3)
 	if err != nil {
-		return "", errors.New("get question error")
+		return "", errors.New("get t question error")
 	}
 	if len(questions) > 0 {
 		return questions[0].Answer, nil
