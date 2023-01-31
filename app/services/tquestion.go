@@ -15,6 +15,7 @@ import (
 	ocr "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ocr/v20181119"
 	"regexp"
 	"socketAPI/common"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -44,6 +45,8 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 	if _, ok := req["md5"]; !ok {
 		return nil, errors.New("md5 can not be empty")
 	}
+
+	timestampNano := strconv.FormatInt(time.Now().UnixNano()/1e6, 10)
 
 	pic := strings.Replace(req["pic"], "_JH_", "+", -1)
 	credential := t_common.NewCredential(req["id"], req["key"])
@@ -148,6 +151,8 @@ VALUES (:question, :md5,:update_time)`, insertQuestionMd5)
 		res["answer"] = answer
 		return res, nil
 	}
+
+	common.UploadByJson(pic, "question", time.Now().Format("2006-01-02 15:04:05")+"nano"+timestampNano+".png")
 
 	var insertQuestion common.Questions
 	var insertQuestionMd5 common.QuestionMd5
