@@ -111,7 +111,8 @@ type TimersANDTimerField struct {
 
 type QuestionsANDMd5 struct {
 	Questions
-	QuestionMd5
+	Md5        string `db:"md5" json:"md5"`
+	UpdateTime int    `db:"update_time" json:"update_time"`
 }
 
 type MachinesANDMid struct {
@@ -123,7 +124,7 @@ var Db *sqlx.DB
 
 func InitDB() {
 	database, err := sqlx.Open("mysql", config.MyConfig.DB.User+":"+config.MyConfig.DB.Password+
-		"@tcp(127.0.0.1:"+config.MyConfig.DB.Port+")/script")
+		"@tcp(`127.0.0.1`:"+config.MyConfig.DB.Port+")/script")
 	if err != nil {
 		fmt.Println("open mysql failed,", err)
 		return

@@ -11,6 +11,7 @@ import (
 func init() {
 	common.InitDB()
 	myCron.Start()
+	//services.Doit()
 }
 
 func main() {

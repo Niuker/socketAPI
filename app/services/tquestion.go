@@ -74,17 +74,11 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 		return nil, errors.New("pic res text < 4")
 	}
 	text := make([]string, l)
-	for k, v := range response.Response.TextDetections {
-		text[l-k-1] = common.StringStrip(*v.DetectedText)
-	}
-
-	var q string
-	for kk, vv := range text {
-		if kk > 2 {
-			q = vv + q
-		}
-	}
 	regQ, err := regexp.Compile("^第[\\s\\S]{0,5}问\\s?\\S?")
+	if err != nil {
+		return nil, err
+	}
+	regQL, err := regexp.Compile("[(\u4E00-\u9FA5)(\\])]$")
 	if err != nil {
 		return nil, err
 	}
@@ -99,6 +93,21 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 	regS3, err := regexp.Compile("^C\\.")
 	if err != nil {
 		return nil, err
+	}
+
+	for k, v := range response.Response.TextDetections {
+		text[l-k-1] = common.StringStrip(*v.DetectedText)
+	}
+
+	if !regS3.Match([]byte(text[0])) {
+		text = text[1:]
+	}
+
+	var q string
+	for kk, vv := range text {
+		if kk > 2 {
+			q = vv + q
+		}
 	}
 
 	if !regS3.Match([]byte(text[0])) {
@@ -118,7 +127,13 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 		common.Log("regQ match error", response.ToJsonString())
 		return nil, errors.New("regQ match error")
 	}
-	ques := regQ.ReplaceAllString(q, "")
+	qq := regQ.ReplaceAllString(q, "")
+	ques := qq
+	if !regQL.Match([]byte(qq)) {
+		if last := len(qq) - 1; last >= 0 {
+			ques = qq[:last]
+		}
+	}
 
 	res := map[string]string{"answer": ""}
 
