@@ -146,7 +146,7 @@ func AddGifts(req map[string]string) (interface{}, error) {
 		return nil, err
 	}
 	if len(CronGiftcodes) > 0 {
-		return nil, errors.New("code exisit")
+		return nil, errors.New("code exists")
 	}
 
 	CronGiftcode.Code = req["code"]
