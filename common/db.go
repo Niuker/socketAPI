@@ -75,9 +75,10 @@ type Cronuid struct {
 }
 
 type CronGiftcode struct {
-	Id   int    `db:"id" json:"id"`
-	Code string `db:"code" json:"code"`
-	Del  int    `db:"del" json:"del"`
+	Id         int    `db:"id" json:"id"`
+	Code       string `db:"code" json:"code"`
+	Del        int    `db:"del" json:"del"`
+	CreateTime int    `db:"create_time" json:"create_time"`
 }
 
 type CronUidgift struct {

@@ -92,6 +92,13 @@ func getGift(uid int) {
 			common.Log("crontab error data", err)
 			return
 		}
+		if resData["code"] == float64(424) {
+			_, err = common.Db.Exec(`update crongiftcode set del = 1 where id = ?`, crongift.Id)
+			if err != nil {
+				common.Log("crontab 424 error", err)
+				return
+			}
+		}
 
 		if resData["code"] == float64(425) || resData["code"] == float64(0) {
 			var CronUidgift common.CronUidgift

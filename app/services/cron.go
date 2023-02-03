@@ -151,6 +151,7 @@ func AddGifts(req map[string]string) (interface{}, error) {
 
 	CronGiftcode.Code = req["code"]
 	CronGiftcode.Del = 0
+	CronGiftcode.CreateTime = int(time.Now().Unix())
 	_, err = common.Db.NamedExec(`INSERT INTO crongiftcode (code, del) 
 VALUES (:code, :del)`, CronGiftcode)
 	if err != nil {

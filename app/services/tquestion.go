@@ -73,67 +73,65 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 	if l < 4 {
 		return nil, errors.New("pic res text < 4")
 	}
-	text := make([]string, l)
-	regQ, err := regexp.Compile("^第[\\s\\S]{0,5}问\\s?\\S?")
+	text := make([]string, 4)
+	regAll, err := regexp.Compile("[^0-9a-zA-Z\u4e00-\u9fa5]+")
 	if err != nil {
 		return nil, err
 	}
-	regQL, err := regexp.Compile("[(\u4E00-\u9FA5)(\\])]$")
+	regQ1, err := regexp.Compile("^第[\\s\\S]{0,5}问\\s?\\S?")
 	if err != nil {
 		return nil, err
 	}
-	regS1, err := regexp.Compile("^A\\.")
+	regQL, err := regexp.Compile("[^\u4e00-\u9fa5]+$")
 	if err != nil {
 		return nil, err
 	}
-	regS2, err := regexp.Compile("^B\\.")
+	regS1, err := regexp.Compile("^A")
 	if err != nil {
 		return nil, err
 	}
-	regS3, err := regexp.Compile("^C\\.")
+	regS2, err := regexp.Compile("^B")
+	if err != nil {
+		return nil, err
+	}
+	regS3, err := regexp.Compile("^C")
 	if err != nil {
 		return nil, err
 	}
 
-	for k, v := range response.Response.TextDetections {
-		text[l-k-1] = common.StringStrip(*v.DetectedText)
-	}
-
-	if !regS3.Match([]byte(text[0])) {
-		text = text[1:]
-	}
-
-	var q string
-	for kk, vv := range text {
-		if kk > 2 {
-			q = vv + q
+	var haveA bool = false
+	for _, v := range response.Response.TextDetections {
+		t := regAll.ReplaceAllString(common.StringStrip(*v.DetectedText), "")
+		if regQ1.Match([]byte(t)) {
+			text[0] = t
+			continue
+		}
+		if regS1.Match([]byte(t)) {
+			text[1] = t
+			haveA = true
+			continue
+		}
+		if text[0] != "" && !haveA {
+			text[0] = text[0] + t
+		}
+		if regS2.Match([]byte(t)) {
+			text[2] = t
+			continue
+		}
+		if regS3.Match([]byte(t)) {
+			text[3] = t
+			break
 		}
 	}
 
-	if !regS3.Match([]byte(text[0])) {
-		common.Log("regS3 match error", response.ToJsonString())
-		return nil, errors.New("regS3 match error")
-	}
-	if !regS2.Match([]byte(text[1])) {
-		common.Log("regS2 match error", response.ToJsonString())
-		return nil, errors.New("regS2 match error")
-	}
-	if !regS1.Match([]byte(text[2])) {
-		common.Log("regS1 match error", response.ToJsonString())
-		return nil, errors.New("regS1 match error")
-	}
-
-	if !regQ.Match([]byte(q)) {
-		common.Log("regQ match error", response.ToJsonString())
-		return nil, errors.New("regQ match error")
-	}
-	qq := regQ.ReplaceAllString(q, "")
-	ques := qq
-	if !regQL.Match([]byte(qq)) {
-		if last := len(qq) - 1; last >= 0 {
-			ques = qq[:last]
+	for _, vv := range text {
+		if vv == "" {
+			return nil, errors.New("reg error")
 		}
 	}
+
+	text[0] = regQ1.ReplaceAllString(text[0], "")
+	text[0] = regQL.ReplaceAllString(text[0], "")
 
 	res := map[string]string{"answer": ""}
 
@@ -147,14 +145,14 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 		return res, nil
 	}
 
-	answer, err = getQuestionAndAnswer(ques, text[2], text[1], text[0])
+	answer, err = getQuestionAndAnswer(text[0], text[1], text[2], text[3])
 	if err != nil {
 		if err.Error() != "no question" {
 			return nil, err
 		}
 	} else {
 		var insertQuestionMd5 common.QuestionMd5
-		insertQuestionMd5.Question = ques
+		insertQuestionMd5.Question = text[0]
 		insertQuestionMd5.Md5 = req["md5"]
 		insertQuestionMd5.UpdateTime = int(time.Now().Unix())
 
@@ -172,13 +170,13 @@ VALUES (:question, :md5,:update_time)`, insertQuestionMd5)
 	var insertQuestion common.Questions
 	var insertQuestionMd5 common.QuestionMd5
 
-	insertQuestion.Question = ques
-	insertQuestion.Select1 = text[2]
-	insertQuestion.Select2 = text[1]
-	insertQuestion.Select3 = text[0]
+	insertQuestion.Question = text[0]
+	insertQuestion.Select1 = text[1]
+	insertQuestion.Select2 = text[2]
+	insertQuestion.Select3 = text[3]
 	insertQuestion.Answer = ""
 
-	insertQuestionMd5.Question = ques
+	insertQuestionMd5.Question = text[0]
 	insertQuestionMd5.Md5 = req["md5"]
 	insertQuestionMd5.UpdateTime = int(time.Now().Unix())
 
@@ -193,7 +191,5 @@ VALUES (:question, :md5,:update_time)`, insertQuestionMd5)
 		return nil, err
 	}
 	return res, nil
-
-	return ques, nil
 
 }
