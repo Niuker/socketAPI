@@ -93,7 +93,7 @@ func getGift(uid int) {
 			return
 		}
 		if resData["code"] == float64(424) {
-			_, err = common.Db.Exec(`update crongiftcode set del = 1 where id = ?`, crongift.Id)
+			_, err = common.Db.Exec(`update crongiftcode set del = 1 where id = ? and create_time < ?`, crongift.Id, time.Now().AddDate(0, 0, -7).Unix())
 			if err != nil {
 				common.Log("crontab 424 error", err)
 				return

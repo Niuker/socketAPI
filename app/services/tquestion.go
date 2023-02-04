@@ -102,16 +102,12 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 	var haveA bool = false
 	for _, v := range response.Response.TextDetections {
 		t := regAll.ReplaceAllString(common.StringStrip(*v.DetectedText), "")
-		if regQ1.Match([]byte(t)) {
-			text[0] = t
-			continue
-		}
 		if regS1.Match([]byte(t)) {
 			text[1] = t
 			haveA = true
 			continue
 		}
-		if text[0] != "" && !haveA {
+		if !haveA {
 			text[0] = text[0] + t
 		}
 		if regS2.Match([]byte(t)) {

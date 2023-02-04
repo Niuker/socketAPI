@@ -6,8 +6,38 @@ import (
 )
 
 func Doit() {
+	q2()
+}
+
+func q2() {
 	var questions []common.Questions
-	var questionsmd5 []common.QuestionsANDMd5
+	var questionsmd5 []common.QuestionMd5
+	_ = common.Db.Select(&questions, "select * from questions")
+	_ = common.Db.Select(&questionsmd5, "select * from question_md5")
+	regAll, _ := regexp.Compile("[^0-9a-zA-Z\u4e00-\u9fa5]+")
+	common.Log(222)
+
+	for _, v := range questionsmd5 {
+		common.Log(v.Question)
+		common.Log(regAll.ReplaceAllString(v.Question, ""))
+		_, err := common.Db.Exec("update question_md5 set question=? where question = ? ", regAll.ReplaceAllString(v.Question, ""), v.Question)
+		if err != nil {
+			common.Log(err)
+		}
+	}
+
+	for _, vv := range questions {
+		_, err := common.Db.Exec("update questions set question=?,select1=?,select2=?,select3=?  where question = ? ", regAll.ReplaceAllString(vv.Question, ""), regAll.ReplaceAllString(vv.Select1, ""), regAll.ReplaceAllString(vv.Select2, ""), regAll.ReplaceAllString(vv.Select3, ""), vv.Question)
+		if err != nil {
+			common.Log(err)
+		}
+	}
+
+}
+
+func q1() {
+	var questions []common.Questions
+	var questionsmd5 []common.QuestionMd5
 	_ = common.Db.Select(&questions, "select * from questions")
 	_ = common.Db.Select(&questionsmd5, "select * from question_md5")
 	regQL, _ := regexp.Compile(" [\u4E00-\u9FA5]$")
