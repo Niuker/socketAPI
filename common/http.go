@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	t_errors "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
 	"io"
 	"net/http"
 	"socketAPI/app/structure"
@@ -30,6 +31,9 @@ func POST(w http.ResponseWriter, r *http.Request, f func(map[string]string) (int
 
 	if err != nil {
 		res.Code = 1
+		if _, ok := err.(*t_errors.TencentCloudSDKError); ok {
+			res.Code = 2
+		}
 		res.Error = err.Error()
 		msg, _ := json.Marshal(res)
 		w.Write(msg)

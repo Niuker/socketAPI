@@ -78,7 +78,7 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	regQ1, err := regexp.Compile("^第[\\s\\S]{0,5}问\\s?\\S?")
+	regQ1, err := regexp.Compile("^第[\\s\\S]{0,5}问")
 	if err != nil {
 		return nil, err
 	}

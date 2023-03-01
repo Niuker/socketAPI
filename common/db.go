@@ -11,6 +11,7 @@ type Machines struct {
 	Id          int    `db:"id" json:"id"`
 	MachineCode string `db:"machine_code" json:"machine_code"`
 	UserId      int    `db:"user_id" json:"user_id"`
+	UpdateTime  int    `db:"update_time" json:"update_time"`
 	Mid         string `db:"mid" json:"mid"`
 }
 
@@ -81,6 +82,13 @@ type CronGiftcode struct {
 	CreateTime int    `db:"create_time" json:"create_time"`
 }
 
+type AutoCronGiftcode struct {
+	Id    int    `db:"id" json:"id"`
+	Code  string `db:"code" json:"code"`
+	Start string `db:"start" json:"start"`
+	End   string `db:"end" json:"end"`
+}
+
 type CronUidgift struct {
 	Id     int `db:"id" json:"id"`
 	CodeId int `db:"code_id" json:"code_id"`
@@ -99,6 +107,12 @@ type UserConfig struct {
 	Config string `db:"config" json:"config"`
 	Name   string `db:"name" json:"name"`
 	Del    string `db:"del" json:"del"`
+}
+
+type Version struct {
+	Id      int    `db:"id" json:"id"`
+	Name    string `db:"name" json:"name"`
+	Version string `db:"version" json:"version"`
 }
 
 type MissionsANDMissionField struct {

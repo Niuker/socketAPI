@@ -7,6 +7,8 @@ import (
 	"errors"
 )
 
+//wcL+kZel294= 666
+
 func desECBEncrypt(data, key []byte) []byte {
 	//NewCipher创建一个新的加密块
 	block, err := des.NewCipher(key)

@@ -6,6 +6,7 @@ import (
 	"socketAPI/common"
 	"socketAPI/config"
 	"strconv"
+	"time"
 )
 
 func SetMachines(req map[string]string) (interface{}, error) {
@@ -41,9 +42,16 @@ func SetMachines(req map[string]string) (interface{}, error) {
 
 	machine.MachineCode = machineCode
 	machine.UserId = id
+	machine.UpdateTime = int(time.Now().Unix())
 
 	if len(machines) == 1 {
 		if machines[0].MachineCode == machineCode {
+			_, err = common.Db.Exec("update machines set update_time= ?  where  user_id=?",
+				int(time.Now().Unix()), id)
+			if err != nil {
+				common.Log("update machines error", err)
+				return nil, err
+			}
 			return machine, nil
 		} else {
 			// del machines missions timers
@@ -63,8 +71,8 @@ func SetMachines(req map[string]string) (interface{}, error) {
 				return nil, err
 			}
 
-			_, err = common.Db.NamedExec(`INSERT INTO machines (machine_code, user_id) 
-VALUES (:machine_code, :user_id)`, machine)
+			_, err = common.Db.NamedExec(`INSERT INTO machines (machine_code, user_id,update_time) 
+VALUES (:machine_code, :user_id, :update_time)`, machine)
 			if err != nil {
 				return nil, err
 			}
@@ -74,8 +82,8 @@ VALUES (:machine_code, :user_id)`, machine)
 	}
 
 	if len(machines) < 1 {
-		_, err = common.Db.NamedExec(`INSERT INTO machines (machine_code, user_id) 
-VALUES (:machine_code, :user_id)`, machine)
+		_, err = common.Db.NamedExec(`INSERT INTO machines (machine_code, user_id,update_time) 
+VALUES (:machine_code, :user_id, :update_time)`, machine)
 		if err != nil {
 			return nil, err
 		}
