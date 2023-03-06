@@ -10,7 +10,7 @@ func main() {
 	for true {
 		var client = &model.SocketClient{
 			Network: "tcp4",
-			Address: "47.94.99.64:8000",
+			Address: "47.94.99.64:8880",
 			//Address: "localhost:8000",
 			//Address: ":9800",
 			OnMessage: func(msg string) {

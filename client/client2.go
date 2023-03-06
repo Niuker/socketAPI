@@ -10,8 +10,8 @@ func main() {
 	for true {
 		var client = &model.SocketClient{
 			Network: "tcp4",
-			//Address: "47.94.99.64:8000",
-			Address: "localhost:8000",
+			Address: "47.94.99.64:8880",
+			//Address: "localhost:8000",
 			//Address: ":9800",
 			OnMessage: func(msg string) {
 				fmt.Println("接收到服务端的消息", msg)
@@ -32,12 +32,12 @@ func main() {
 		client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"user_id\":\"q3OC3o99xY4=\"},\"timestamp\":123}\n"))
 		time.Sleep(time.Second * 1)
 
-		client.Connect.Write([]byte("{\"event\":\"send\",\"params\":{\"revicer\":\"jHsnLfAZIpcoUHBZPzYWww==\",\"context\":\"221312\"},\"timestamp\":99123311113}\n"))
+		client.Connect.Write([]byte("{\"event\":\"send\",\"params\":{\"revicer\":\"wcL+kZel294=\",\"context\":\"221312\"},\"timestamp\":99123311113}\n"))
 		time.Sleep(time.Second * 1)
 
-		client.Connect.Write([]byte("{\"event\":\"send\",\"params\":{\"revicer\":\"jHsnLfAZIpcoUHBZPzYWww==\",\"context\":\"221312\"},\"timestamp\":99123311113}\n"))
+		client.Connect.Write([]byte("{\"event\":\"send\",\"params\":{\"revicer\":\"wcL+kZel294=\",\"context\":\"221312\"},\"timestamp\":99123311113}\n"))
 		time.Sleep(time.Second * 1)
-		client.Connect.Write([]byte("{\"event\":\"send\",\"params\":{\"revicer\":\"jHsnLfAZIpcoUHBZPzYWww==\",\"context\":\"221312\"},\"timestamp\":99123311113}\n"))
+		client.Connect.Write([]byte("{\"event\":\"send\",\"params\":{\"revicer\":\"wcL+kZel294=\",\"context\":\"221312\"},\"timestamp\":99123311113}\n"))
 		time.Sleep(time.Second * 1)
 		////
 		//client.Connect.Write([]byte("{\"Event\":\"getMissions\",\"params\":{\"user_id\":\"Rn+lqjJcpT0=\",\"date\":\"12312\"},\"timestamp\":99923333333,\"reqid\":\"99923333333\"}\n"))

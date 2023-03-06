@@ -61,6 +61,9 @@ func GET(w http.ResponseWriter, r *http.Request, f func(map[string]string) (inte
 		w.WriteHeader(400)
 		res.Code = 1
 		res.Error = err.Error()
+		if err.Error() == "machine_code can not be empty" {
+			res.Code = 3
+		}
 		msg, _ := json.Marshal(res)
 		w.Write(msg)
 	} else {

@@ -11,5 +11,5 @@ func SetMissionsWithMachine(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetMissionsWithMachine(w http.ResponseWriter, r *http.Request) {
-	common.GET(w, r, services.GetMissionsWithMachine, true)
+	common.GET(w, r, services.GetMissionsWithMachineStrict, true)
 }

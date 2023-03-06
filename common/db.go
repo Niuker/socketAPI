@@ -30,12 +30,13 @@ type MissionField struct {
 	Isday   int    `db:"isday" json:"isday"`
 }
 type Missions struct {
-	Id             int `db:"id" json:"id"`
-	UserId         int `db:"user_id" json:"userId"`
-	MissionFieldId int `db:"mission_field_id" json:"mission_field_id"`
-	Value          int `db:"value" json:"value"`
-	UpdateTime     int `db:"update_time" json:"update_time"`
-	Date           int `db:"date" json:"date"`
+	Id             int    `db:"id" json:"id"`
+	UserId         int    `db:"user_id" json:"userId"`
+	MissionFieldId int    `db:"mission_field_id" json:"mission_field_id"`
+	Value          int    `db:"value" json:"value"`
+	UpdateTime     int    `db:"update_time" json:"update_time"`
+	Date           int    `db:"date" json:"date"`
+	MachineCode    string `db:"machine_code" json:"machine_code"`
 }
 
 type TimerField struct {
@@ -44,11 +45,12 @@ type TimerField struct {
 	Default int    `db:"default" json:"default"`
 }
 type Timers struct {
-	Id           int `db:"id" json:"id"`
-	UserId       int `db:"user_id" json:"user_id"`
-	TimerFieldId int `db:"timer_field_id" json:"timer_field_id"`
-	Value        int `db:"value" json:"value"`
-	UpdateTime   int `db:"update_time" json:"update_time"`
+	Id           int    `db:"id" json:"id"`
+	UserId       int    `db:"user_id" json:"user_id"`
+	TimerFieldId int    `db:"timer_field_id" json:"timer_field_id"`
+	Value        int    `db:"value" json:"value"`
+	UpdateTime   int    `db:"update_time" json:"update_time"`
+	MachineCode  string `db:"machine_code" json:"machine_code"`
 }
 type Questions struct {
 	Id       int    `db:"id" json:"id"`
@@ -139,7 +141,7 @@ var Db *sqlx.DB
 
 func InitDB() {
 	database, err := sqlx.Open("mysql", config.MyConfig.DB.User+":"+config.MyConfig.DB.Password+
-		"@tcp(127.0.0.1:"+config.MyConfig.DB.Port+")/script")
+		"@tcp(127.0.0.1:"+config.MyConfig.DB.Port+")/script2")
 	if err != nil {
 		fmt.Println("open mysql failed,", err)
 		return
