@@ -157,17 +157,27 @@ func VerifyMachine(req map[string]string, strict bool) error {
 		}
 	}
 
-	if _, ok := req["date"]; !ok {
-		return nil
-	}
-
 	if strict {
-		var missions []common.Missions
-		err = common.Db.Select(&missions, "select * from missions where machine_code = '' and user_id = ? and date=? ", id, req["date"])
-
-		if len(missions) > 0 {
-			return errors.New("machine_code can not be empty")
+		if _, ok := req["date"]; !ok || req["date"] == "" {
+			var timers []common.Timers
+			err = common.Db.Select(&timers, "select * from timers where machine_code = '' and user_id = ? ", id)
+			if err != nil {
+				return err
+			}
+			if len(timers) > 0 {
+				return errors.New("machine_code can not be empty")
+			}
+		} else {
+			var missions []common.Missions
+			err = common.Db.Select(&missions, "select * from missions where machine_code = '' and user_id = ? and date=? ", id, req["date"])
+			if err != nil {
+				return err
+			}
+			if len(missions) > 0 {
+				return errors.New("machine_code can not be empty")
+			}
 		}
+
 	}
 
 	return nil
