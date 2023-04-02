@@ -17,6 +17,10 @@ func GetNotes(req map[string]string) (interface{}, error) {
 		return nil, err
 	}
 
+	if len(notes) == 0 {
+		return []struct{}{}, nil
+	}
+
 	return notes, nil
 }
 
@@ -36,6 +40,7 @@ func AddNotes(req map[string]string) (interface{}, error) {
 		return nil, errors.New("machine_code不能为空")
 	}
 	machineCode, err := encr.ECBDecrypter(config.MyConfig.ENCR.Desckey, req["machine_code"])
+
 	if machineCode == "" || err != nil {
 		return nil, errors.New("本次machine_code解密失败")
 	}
@@ -72,6 +77,7 @@ VALUES (:notes, :time)`, note)
 	if len(notes) == 1 {
 		_, err = common.Db.Exec("update notes set `time`=? where  notes=?",
 			exp, req["notes"])
+		return true, nil
 	}
 
 	return nil, errors.New("note数据异常")
