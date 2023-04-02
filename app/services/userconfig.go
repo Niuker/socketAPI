@@ -52,7 +52,7 @@ VALUES (:user, :pass)`, account)
 		return getConfigsByUserID(accounts[0].Id)
 	}
 
-	return nil, errors.New("account异常")
+	return nil, errors.New("account数据异常")
 }
 
 func getConfigsByUserID(userID int) ([]common.UserConfig, error) {
@@ -74,7 +74,7 @@ func verifyUser(user string, pass string) ([]common.UserConfigAccount, error) {
 		return accounts, err
 	}
 	if len(accounts) != 1 {
-		return accounts, errors.New("account异常")
+		return accounts, errors.New("账号或者密码错误")
 	}
 	return accounts, nil
 }

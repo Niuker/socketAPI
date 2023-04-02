@@ -26,7 +26,7 @@ func POST(w http.ResponseWriter, r *http.Request, f func(map[string]string) (int
 
 	data, err := f(reqData)
 	if log {
-		Log("http", reqData, data)
+		Log("http", reqData, data, err)
 	}
 
 	if err != nil {
@@ -54,7 +54,7 @@ func GET(w http.ResponseWriter, r *http.Request, f func(map[string]string) (inte
 	}
 	data, err := f(reqData)
 	if log {
-		Log("http", reqData, data)
+		Log("http", reqData, data, err)
 	}
 
 	if err != nil {

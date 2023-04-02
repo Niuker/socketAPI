@@ -117,6 +117,17 @@ type Version struct {
 	Version string `db:"version" json:"version"`
 }
 
+type Notes struct {
+	Id    int    `db:"id" json:"id"`
+	Notes string `db:"notes" json:"notes"`
+	Time  int    `db:"time" json:"time"`
+}
+
+type Fontmanager struct {
+	Id          int    `db:"id" json:"id"`
+	MachineCode string `db:"machine_code" json:"machine_code"`
+}
+
 type MissionsANDMissionField struct {
 	Missions
 	MissionField

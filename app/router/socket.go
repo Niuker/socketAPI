@@ -42,6 +42,11 @@ func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]cha
 	case req := <-c[mid]["questions"]:
 		res = common.SocketRouter(req, services.UploadQuestion)
 
+	case req := <-c[mid]["addNotes"]:
+		res = common.SocketRouter(req, services.AddNotes)
+	case req := <-c[mid]["getNotes"]:
+		res = common.SocketRouter(req, services.GetNotes)
+
 	case req := <-c[mid]["send"]:
 		res = common.SocketRouter(req, func(m map[string]string) (interface{}, error) {
 			return m, nil

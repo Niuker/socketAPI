@@ -16,7 +16,7 @@ func SocketRouter(req structure.ReqData, f func(map[string]string) (interface{},
 	res.Reqid = req.Reqid
 
 	data, err := f(req.Params)
-	Log("socket", req, data)
+	Log("socket", req, data, err)
 
 	if err == nil {
 		res.Data = data

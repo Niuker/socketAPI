@@ -20,6 +20,9 @@ func RegisterRoutes(r *mux.Router) {
 	wsRouter.HandleFunc("/machines", httpController.GetMachines).Methods("GET")
 	wsRouter.HandleFunc("/machines", httpController.SetMachines).Methods("POST")
 
+	wsRouter.HandleFunc("/notes", httpController.GetNotes).Methods("GET")
+	wsRouter.HandleFunc("/notes", httpController.AddNotes).Methods("POST")
+
 	wsRouter.HandleFunc("/account", httpController.Account).Methods("POST")
 	wsRouter.HandleFunc("/config", httpController.GetConfig).Methods("GET")
 	wsRouter.HandleFunc("/config", httpController.AddUserConfig).Methods("POST")
