@@ -29,6 +29,8 @@ func SetMachines(req map[string]string) (interface{}, error) {
 		return nil, errors.New("id错误")
 	}
 
+	common.AddUserStartRecord(machineCode, id)
+
 	var machines []common.Machines
 	var machine common.Machines
 	err = common.Db.Select(&machines, "select id,machine_code from machines where  user_id = ? and machine_code=?", id, machineCode)

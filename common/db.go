@@ -128,6 +128,14 @@ type Fontmanager struct {
 	MachineCode string `db:"machine_code" json:"machine_code"`
 }
 
+type UserRecord struct {
+	Id          int    `db:"id" json:"id"`
+	UserId      int    `db:"user_id" json:"user_id"`
+	MachineCode string `db:"machine_code" json:"machine_code"`
+	Types       int    `db:"types" json:"types"`
+	Time        int    `db:"time" json:"time"`
+}
+
 type MissionsANDMissionField struct {
 	Missions
 	MissionField

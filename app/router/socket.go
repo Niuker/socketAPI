@@ -47,6 +47,9 @@ func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]cha
 	case req := <-c[mid]["getNotes"]:
 		res = common.SocketRouter(req, services.GetNotes)
 
+	case req := <-c[mid]["userRecord"]:
+		res = common.SocketRouter(req, services.GetUserRecord)
+
 	case req := <-c[mid]["send"]:
 		res = common.SocketRouter(req, func(m map[string]string) (interface{}, error) {
 			return m, nil
@@ -64,9 +67,9 @@ func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]cha
 
 	resJson, err := json.Marshal(res)
 	if err != nil {
-		common.SendConn(conn, err.Error())
+		common.SendConn(conn, err.Error(), mid)
 	} else {
-		common.SendConn(conn, string(resJson))
+		common.SendConn(conn, string(resJson), mid)
 	}
 
 }

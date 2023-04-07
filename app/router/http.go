@@ -42,4 +42,6 @@ func RegisterRoutes(r *mux.Router) {
 	wsRouter.HandleFunc("/cron/gifts", httpController.GetGifts).Methods("GET")
 	wsRouter.HandleFunc("/cron/del/gifts", httpController.DelGifts).Methods("POST")
 
+	wsRouter.HandleFunc("/user_record", httpController.GetUserRecord).Methods("GET")
+
 }
