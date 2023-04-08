@@ -67,9 +67,9 @@ func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]cha
 
 	resJson, err := json.Marshal(res)
 	if err != nil {
-		common.SendConn(conn, err.Error(), mid)
+		common.SendConn(conn, err.Error(), mid, 3)
 	} else {
-		common.SendConn(conn, string(resJson), mid)
+		common.SendConn(conn, string(resJson), mid, 4)
 	}
 
 }

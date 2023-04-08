@@ -38,7 +38,7 @@ func readConnAndSendChan(conn net.Conn, c map[string]map[string]chan structure.R
 
 		raw, err := common.ReadConn(conn)
 		if err != nil {
-			common.AddUserEndRecord(mid)
+			common.AddUserEndRecord(mid, 2)
 			common.Log("readConnAndSendChan close", err)
 			conn.Close()
 			go func() {
@@ -53,7 +53,7 @@ func readConnAndSendChan(conn net.Conn, c map[string]map[string]chan structure.R
 				if revicer, ok := req.Params["revicer"]; ok {
 					revicerId, err := encr.ECBDecrypter(config.MyConfig.ENCR.Desckey, revicer)
 					if err != nil || revicerId == "" {
-						common.SendConn(conn, "revicerId is not reasonable", mid)
+						common.SendConn(conn, "revicerId is not reasonable", mid, 5)
 						conn.Close()
 						return
 					}
@@ -94,9 +94,9 @@ func reviceContext(conn net.Conn, c map[string]map[string]chan structure.ReqData
 			res.Data = req.Params
 			resJson, err := json.Marshal(res)
 			if err != nil {
-				common.SendConn(conn, err.Error(), mid)
+				common.SendConn(conn, err.Error(), mid, 6)
 			} else {
-				err = common.SendConn(conn, string(resJson), mid)
+				err = common.SendConn(conn, string(resJson), mid, 7)
 			}
 		}
 	}
@@ -144,27 +144,27 @@ func handleConnection(conn net.Conn, c map[string]map[string]chan structure.ReqD
 	}
 
 	if len(raw) < 1 {
-		common.SendConn(conn, "Please set id before use server", mid)
+		common.SendConn(conn, "Please set id before use server", mid, 8)
 		conn.Close()
 		return
 	}
 
 	if _, ok := raw[0].Params["user_id"]; !ok {
-		common.SendConn(conn, "please set id before use server", mid)
+		common.SendConn(conn, "please set id before use server", mid, 9)
 		conn.Close()
 		return
 	}
 
 	mid, err = encr.ECBDecrypter(config.MyConfig.ENCR.Desckey, string(raw[0].Params["user_id"]))
 	if err != nil || mid == "" {
-		common.SendConn(conn, "id is not reasonable", mid)
+		common.SendConn(conn, "id is not reasonable", mid, 10)
 		conn.Close()
 		return
 	}
 
 	id, err := strconv.Atoi(mid)
 	if err != nil || mid == "" {
-		common.SendConn(conn, "id is not int", mid)
+		common.SendConn(conn, "id is not int", mid, 11)
 		conn.Close()
 		return
 	}
@@ -174,9 +174,9 @@ func handleConnection(conn net.Conn, c map[string]map[string]chan structure.ReqD
 	resFirst := structure.ResData{Data: "success set id", Timestamp: int(time.Now().Unix())}
 	resJsonFirst, err := json.Marshal(resFirst)
 	if err != nil {
-		common.SendConn(conn, err.Error(), mid)
+		common.SendConn(conn, err.Error(), mid, 12)
 	} else {
-		common.SendConn(conn, string(resJsonFirst), mid)
+		common.SendConn(conn, string(resJsonFirst), mid, 13)
 	}
 	go reviceContext(conn, c, mid)
 

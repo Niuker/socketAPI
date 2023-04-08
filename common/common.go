@@ -29,7 +29,7 @@ VALUES (:user_id, :machine_code, :time, :types)`, userRecord)
 
 }
 
-func AddUserEndRecord(uid string) {
+func AddUserEndRecord(uid string, types int) {
 
 	id, err := strconv.Atoi(uid)
 	if err != nil {
@@ -39,7 +39,7 @@ func AddUserEndRecord(uid string) {
 	var userRecord UserRecord
 	userRecord.UserId = id
 	userRecord.Time = int(time.Now().Unix())
-	userRecord.Types = 2
+	userRecord.Types = types
 
 	_, err = Db.NamedExec(`INSERT INTO userrecord (user_id, machine_code, time, types)
 VALUES (:user_id, :machine_code, :time, :types)`, userRecord)

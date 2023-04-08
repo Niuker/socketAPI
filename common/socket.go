@@ -60,12 +60,12 @@ func ReadConn(conn net.Conn) ([]structure.ReqData, error) {
 	return reqs, nil
 }
 
-func SendConn(conn net.Conn, message string, mid string) error {
+func SendConn(conn net.Conn, message string, mid string, types int) error {
 	var datas = []string{message, "\n"}
 	message = strings.Join(datas, "")
 	_, err := conn.Write([]byte(message))
 	if err != nil {
-		AddUserEndRecord(mid)
+		AddUserEndRecord(mid, types)
 		Log(conn.RemoteAddr().String(), " connection write error: ", err)
 		conn.Close()
 		return err
