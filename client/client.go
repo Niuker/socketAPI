@@ -41,7 +41,7 @@ func main() {
 
 		//}
 		client.Wg.Wait()
-		fmt.Println("与服务器连接断开，3秒后重试")
-		time.Sleep(time.Second * 3)
+		fmt.Println("与服务器连接断开，30秒后重试")
+		time.Sleep(time.Second * 30)
 	}
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net"
 	"socketAPI/app/myCron"
 	"socketAPI/app/structure"
 	"socketAPI/common"
@@ -15,11 +16,11 @@ func init() {
 }
 
 func main() {
-
 	c := make(map[string]map[string]chan structure.ReqData)
+	connMap := make(map[string]net.Conn)
 
 	go server.HttpConnect(config.MyConfig.NET.Http)
 
-	server.Socket(config.MyConfig.NET.Socket, c)
+	server.Socket(config.MyConfig.NET.Socket, c, connMap)
 
 }

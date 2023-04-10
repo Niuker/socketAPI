@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func Socket(listion string, c map[string]map[string]chan structure.ReqData) {
+func Socket(listion string, c map[string]map[string]chan structure.ReqData, connMap map[string]net.Conn) {
 	//make socket，listen port  No1 bingding
 	netListen, err := net.Listen("tcp", listion)
 
@@ -29,13 +29,13 @@ func Socket(listion string, c map[string]map[string]chan structure.ReqData) {
 
 		common.Log(conn.RemoteAddr().String(), " tcp connect success")
 
-		go handleConnection(conn, c) //goroutine gogo
+		go handleConnection(conn, c, connMap) //goroutine gogo
 	}
 }
 
-func readConnAndSendChan(conn net.Conn, c map[string]map[string]chan structure.ReqData, mid string) {
+func readConnAndSendChan(conn net.Conn, c map[string]map[string]chan structure.ReqData, mid string, connMap map[string]net.Conn) {
+	connMap[mid] = conn
 	for {
-
 		raw, err := common.ReadConn(conn)
 		if err != nil {
 			common.AddUserEndRecord(mid, 2)
@@ -130,7 +130,7 @@ func prodANDcons(req structure.ReqData, conn net.Conn, c map[string]map[string]c
 	}
 }
 
-func handleConnection(conn net.Conn, c map[string]map[string]chan structure.ReqData) {
+func handleConnection(conn net.Conn, c map[string]map[string]chan structure.ReqData, connMap map[string]net.Conn) {
 	defer func() {
 		if err := recover(); err != nil {
 			common.Log("recover error handleConnection:", err)
@@ -177,6 +177,10 @@ func handleConnection(conn net.Conn, c map[string]map[string]chan structure.ReqD
 
 	common.Log("login success", id)
 
+	if _, ok := connMap[mid]; ok {
+		connMap[mid].Close()
+	}
+
 	resFirst := structure.ResData{Data: "success set id", Timestamp: int(time.Now().Unix())}
 	resJsonFirst, err := json.Marshal(resFirst)
 	if err != nil {
@@ -186,7 +190,7 @@ func handleConnection(conn net.Conn, c map[string]map[string]chan structure.ReqD
 	}
 	go reviceContext(conn, c, mid)
 
-	readConnAndSendChan(conn, c, mid)
+	readConnAndSendChan(conn, c, mid, connMap)
 
 	//for {
 	//	go readConn(buffer, conn)
