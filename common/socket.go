@@ -29,7 +29,7 @@ func SocketRouter(req structure.ReqData, f func(map[string]string) (interface{},
 }
 
 func ReadConn(conn net.Conn) ([]structure.ReqData, error) {
-	conn.SetDeadline(time.Now().Add(30 * time.Minute))
+	//conn.SetDeadline(time.Now().Add(30 * time.Minute))
 
 	var reqs []structure.ReqData
 
@@ -67,7 +67,8 @@ func SendConn(conn net.Conn, message string, mid string, types int) error {
 	if err != nil {
 		AddUserEndRecord(mid, types)
 		Log(conn.RemoteAddr().String(), " connection write error: ", err)
-		conn.Close()
+		e := conn.Close()
+		Log(conn.RemoteAddr().String(), " connection write close error: ", e)
 		return err
 	}
 	return nil

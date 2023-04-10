@@ -39,8 +39,11 @@ func readConnAndSendChan(conn net.Conn, c map[string]map[string]chan structure.R
 		raw, err := common.ReadConn(conn)
 		if err != nil {
 			common.AddUserEndRecord(mid, 2)
-			common.Log("readConnAndSendChan close", err)
-			conn.Close()
+			common.Log(conn.RemoteAddr().String(), "readConnAndSendChan close", err)
+			e := conn.Close()
+			if err != nil {
+				common.Log("readConnAndSendChan close err", e)
+			}
 			go func() {
 				q := structure.ReqData{}
 				q.Quit = 1
@@ -139,7 +142,10 @@ func handleConnection(conn net.Conn, c map[string]map[string]chan structure.ReqD
 	raw, err := common.ReadConn(conn)
 	if err != nil {
 		common.Log("handleConnection close", err)
-		conn.Close()
+		e := conn.Close()
+		if err != nil {
+			common.Log("handleConnection close err", e)
+		}
 		return
 	}
 
