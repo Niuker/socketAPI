@@ -29,7 +29,7 @@ func RegisterRoutes(r *mux.Router) {
 	wsRouter.HandleFunc("/del/config", httpController.DelConfig).Methods("POST")
 
 	wsRouter.HandleFunc("/questions", httpController.UploadQuestion).Methods("POST")
-	wsRouter.HandleFunc("/t_questions", httpController.UploadTQuestion).Methods("POST")
+	wsRouter.HandleFunc("/tp_questions", httpController.UploadTQuestion).Methods("POST")
 
 	wsRouter.HandleFunc("/upload1", httpController.UploadPic1).Methods("POST")
 	wsRouter.HandleFunc("/upload2", httpController.UploadPic2).Methods("POST")

@@ -136,6 +136,13 @@ type UserRecord struct {
 	Time        int    `db:"time" json:"time"`
 }
 
+type EventController struct {
+	Id      int    `db:"id" json:"id"`
+	Name    string `db:"name" json:"name"`
+	Event   string `db:"event" json:"event"`
+	Disable int    `db:"disable" json:"disable"`
+}
+
 type MissionsANDMissionField struct {
 	Missions
 	MissionField

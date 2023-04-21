@@ -22,6 +22,9 @@ func SocketRouter(req structure.ReqData, f func(map[string]string) (interface{},
 		res.Data = data
 	} else {
 		res.Code = 1
+		if err.Error() == "event not exist" {
+			res.Code = 4
+		}
 		res.Error = err.Error()
 	}
 

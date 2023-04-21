@@ -116,15 +116,37 @@ func prodANDcons(req structure.ReqData, conn net.Conn, c map[string]map[string]c
 	if c[mid][req.Event] == nil {
 		c[mid][req.Event] = make(chan structure.ReqData)
 	}
+
+	var eventController []common.EventController
+	err := common.Db.Select(&eventController, "select * from eventcontroller where disable = ?", 0)
+	if err != nil {
+		common.Log("get socket event error", err)
+	}
+	e := make(map[string]string)
+
+	for _, v := range eventController {
+		if v.Event != "" {
+			e[v.Event] = v.Name
+		} else {
+			e[v.Name] = v.Name
+		}
+	}
+
 	if req.Timestamp < int(time.Now().Add(-6*time.Second).Unix()) {
 		c[mid]["timeout"] = make(chan structure.ReqData)
-
+	}
+	if e[req.Event] == "" {
+		c[mid]["eventError"] = make(chan structure.ReqData)
 	}
 
 	go router.RegisterSocketRoutes(conn, mid, c)
 
 	if req.Timestamp < int(time.Now().Add(-6*time.Second).Unix()) {
 		c[mid]["timeout"] <- req
+	} else if req.Event == "send" {
+		c[mid][req.Event] <- req
+	} else if e[req.Event] == "" {
+		c[mid]["eventError"] <- req
 	} else {
 		c[mid][req.Event] <- req
 	}

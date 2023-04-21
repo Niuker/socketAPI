@@ -10,6 +10,7 @@ import (
 )
 
 func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]chan structure.ReqData) {
+
 	var res structure.ResData
 	select {
 	case req := <-c[mid]["getMissions"]:
@@ -59,10 +60,10 @@ func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]cha
 			return nil, errors.New("timeout")
 		})
 
-		//default:
-		//	res.Code = 1
-		//	res.Error = "event not fount"
-		//}
+	case req := <-c[mid]["eventError"]:
+		res = common.SocketRouter(req, func(m map[string]string) (interface{}, error) {
+			return nil, errors.New("event not exist")
+		})
 	}
 
 	resJson, err := json.Marshal(res)
