@@ -109,14 +109,19 @@ func AddUserConfig(req map[string]string) (interface{}, error) {
 		return nil, err
 	}
 
-	for _, v := range configs {
-		if v.Name == req["name"] {
-			return nil, errors.New("name已存在")
-		}
-	}
 	if len(configs) >= 1000 {
 		return nil, errors.New("configs超过1000个")
 	}
+
+	for _, v := range configs {
+		if v.Name == req["name"] {
+			_, err = common.Db.Exec("delete from user_config where `id` = ?", v.Id)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
 	config.Config = req["config"]
 	config.Name = req["name"]
 	config.UserId = accounts[0].Id
