@@ -10,8 +10,8 @@ import (
 )
 
 func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]chan structure.ReqData) {
-
 	var res structure.ResData
+
 	select {
 	case req := <-c[mid]["getMissions"]:
 		res = common.SocketRouter(req, services.GetMissionsWithMachine)

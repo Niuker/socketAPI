@@ -127,6 +127,7 @@ func prodANDcons(req structure.ReqData, conn net.Conn, c map[string]map[string]c
 	for _, v := range eventController {
 		if v.Event != "" {
 			e[v.Event] = v.Name
+			c[mid][e[req.Event]] = make(chan structure.ReqData)
 		} else {
 			e[v.Name] = v.Name
 		}
@@ -148,7 +149,7 @@ func prodANDcons(req structure.ReqData, conn net.Conn, c map[string]map[string]c
 	} else if e[req.Event] == "" {
 		c[mid]["eventError"] <- req
 	} else {
-		c[mid][req.Event] <- req
+		c[mid][e[req.Event]] <- req
 	}
 }
 

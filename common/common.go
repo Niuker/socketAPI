@@ -22,7 +22,7 @@ func AddUserStartRecord(machine_code string, uid int) {
 	userRecord.Types = 1
 
 	_, err := Db.NamedExec(`INSERT INTO userrecord (user_id, machine_code, time, types)
-VALUES (:user_id, :machine_code, :time, :types)`, userRecord)
+	VALUES (:user_id, :machine_code, :time, :types)`, userRecord)
 	if err != nil {
 		Log("AddUserStartRecord error", err)
 	}
@@ -42,7 +42,7 @@ func AddUserEndRecord(uid string, types int) {
 	userRecord.Types = types
 
 	_, err = Db.NamedExec(`INSERT INTO userrecord (user_id, machine_code, time, types)
-VALUES (:user_id, :machine_code, :time, :types)`, userRecord)
+	VALUES (:user_id, :machine_code, :time, :types)`, userRecord)
 	if err != nil {
 		Log("AddUserEndRecord error", err)
 	}
