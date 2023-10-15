@@ -35,6 +35,23 @@ func initTimer(id int, mcode string, repeat bool) error {
 		common.Log("exec failed, ", err)
 		return errors.New("get timer field error")
 	}
+
+	for _, mfs := range timerField {
+		tmpTimersId := 0
+		for _, ms := range timers {
+			if mfs.Id == ms.TimerFieldId {
+				if tmpTimersId != 0 {
+					if tmpTimersId > ms.Id {
+						tmpTimersId = ms.Id
+					}
+					_, err = common.Db.Exec("delete from timers where `id` = ? and  user_id=?  and machine_code=?", tmpTimersId, id, mcode)
+					return initTimer(id, mcode, true)
+				}
+				tmpTimersId = ms.Id
+			}
+		}
+	}
+
 	if len(timers) == len(timerField) {
 		return nil
 	}
