@@ -7,12 +7,12 @@ import (
 
 func Start() {
 	c := cron.New()
-	c.AddFunc("0 0 5 * * ?", func() {
+	c.AddFunc("0 0 2 * * ?", func() {
 		tasks.MissionsDay()
 		tasks.MissionsWeek()
 		tasks.TimersWeek()
 	})
-	c.AddFunc("0 0 */1 * * ?", func() {
+	c.AddFunc("0 0 0-4,6-23 * * ?", func() {
 		//c.AddFunc("*/5 * * * * ?", func() {
 		tasks.GiftStart()
 	})
