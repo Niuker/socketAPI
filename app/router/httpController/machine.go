@@ -11,5 +11,5 @@ func SetMachines(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetMachines(w http.ResponseWriter, r *http.Request) {
-	common.GET(w, r, services.GetMachines, true)
+	common.POST(w, r, services.GetMachines, true)
 }

@@ -133,7 +133,7 @@ func prodANDcons(req structure.ReqData, conn net.Conn, c map[string]map[string]c
 		}
 	}
 
-	if req.Timestamp < int(time.Now().Add(-6*time.Second).Unix()) {
+	if req.Timestamp < int(time.Now().Add(-11*time.Second).Unix()) {
 		c[mid]["timeout"] = make(chan structure.ReqData)
 	}
 	if e[req.Event] == "" {
@@ -142,7 +142,7 @@ func prodANDcons(req structure.ReqData, conn net.Conn, c map[string]map[string]c
 
 	go router.RegisterSocketRoutes(conn, mid, c)
 
-	if req.Timestamp < int(time.Now().Add(-6*time.Second).Unix()) {
+	if req.Timestamp < int(time.Now().Add(-11*time.Second).Unix()) {
 		c[mid]["timeout"] <- req
 	} else if req.Event == "send" {
 		c[mid][req.Event] <- req

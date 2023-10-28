@@ -11,5 +11,5 @@ func AddNotes(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetNotes(w http.ResponseWriter, r *http.Request) {
-	common.GET(w, r, services.GetNotes, true)
+	common.POST(w, r, services.GetNotes, true)
 }

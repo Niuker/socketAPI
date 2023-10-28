@@ -95,6 +95,9 @@ VALUES (:machine_code, :user_id, :update_time)`, machine)
 	return machine, nil
 }
 
+func Return404(req map[string]string) (interface{}, error) {
+	return nil, errors.New("event not exist")
+}
 func GetMachines(req map[string]string) (interface{}, error) {
 	if _, ok := req["machine_code"]; !ok {
 		return nil, errors.New("machine_code不能为空")

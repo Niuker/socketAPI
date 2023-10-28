@@ -31,11 +31,12 @@ func main() {
 	//for true {
 	client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"user_id\":\"wcL+kZel294=\"},\"timestamp\":1681384045}\n"))
 	time.Sleep(time.Second * 1)
+	client.Connect.Write([]byte("{\"event\":\"setMachines\",\"version\":\"10.27\",\"params\":{\"user_id\":\"wcL+kZel294=\",\"machine_code\":\"wcL+kZel294=\",\"date\":\"12312\"},\"timestamp\":2813842600}\n"))
 
-	client.Connect.Write([]byte("{\"event\":\"getNotess\",\"params\":{\"user_id\":\"wcL+kZel294=\",\"machine_code\":\"wcL+kZel294=\"},\"timestamp\":2813842600}\n"))
+	client.Connect.Write([]byte("{\"event\":\"getNotes\",\"version\":\"10.27\",\"params\":{\"user_id\":\"wcL+kZel294=\",\"machine_code\":\"wcL+kZel294=\"},\"timestamp\":2813842600}\n"))
 	time.Sleep(time.Second * 1)
 
-	//client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"user_id\":\"wcL+kZel294=\",\"date\":\"12312\"},\"timestamp\":2813842600}\n"))
+	//client.Connect.Write([]byte("{\"event\":\"getMissions\",\"version\":\"ff.11\",\"params\":{\"user_id\":\"wcL+kZel294=\",\"machine_code\":\"wcL+kZel294=\",\"date\":\"12312\"},\"timestamp\":2813842600}\n"))
 	//time.Sleep(time.Second * 10)
 	//client.Connect.Write([]byte("{\"event\":\"getMissions\",\"params\":{\"user_id\":\"wcL+kZel294=\",\"date\":\"12312\"},\"timestamp\":2813842600}\n"))
 

@@ -117,6 +117,12 @@ type Version struct {
 	Version string `db:"version" json:"version"`
 }
 
+type CronVersion struct {
+	Id      int    `db:"id" json:"id"`
+	Name    string `db:"name" json:"name"`
+	Version string `db:"version" json:"version"`
+}
+
 type Notes struct {
 	Id    int    `db:"id" json:"id"`
 	Notes string `db:"notes" json:"notes"`

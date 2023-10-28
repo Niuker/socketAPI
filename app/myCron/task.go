@@ -8,7 +8,6 @@ import (
 func Start() {
 	c := cron.New()
 	c.AddFunc("0 0 2 * * ?", func() {
-		tasks.MissionsDay()
 		tasks.MissionsWeek()
 		tasks.TimersWeek()
 	})

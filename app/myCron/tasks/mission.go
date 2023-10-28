@@ -1,58 +1,28 @@
 package tasks
 
 import (
-	"github.com/jmoiron/sqlx"
 	"socketAPI/common"
 	"time"
 )
 
 func MissionsWeek() {
 	common.Log("MissionsWeek start")
-	delMissions(time.Now().Add(-7*time.Hour*24*4).Unix(), false)
+	for i := 0; i < 500; i++ {
 
-}
-func MissionsDay() {
-	common.Log("MissionsDay start")
-	delMissions(time.Now().Add(-7*time.Hour*24).Unix(), true)
-}
-
-func delMissions(t int64, isday bool) {
-	var missionField []common.MissionField
-
-	mfsql := "select id from mission_field where isday = 0"
-	if isday {
-		mfsql = "select id from mission_field where isday = 1"
-	}
-	err := common.Db.Select(&missionField, mfsql)
-
-	if err != nil {
-		common.Log("crontab error", err)
-		return
-	}
-	var mfids []int
-	for _, mf := range missionField {
-		mfids = append(mfids, mf.Id)
-	}
-
-	for i := 0; i < 1000; i++ {
-		sql, inIds, err := sqlx.In("delete from missions where `date` < ? and mission_field_id IN (?) LIMIT 1000",
-			t, mfids)
+		res, err := common.Db.Exec("delete from missions where `date` < ? LIMIT 1000", time.Now().Add(-7*time.Hour*24*4).Unix())
 		if err != nil {
 			common.Log("crontab error", err)
 			return
 		}
 
-		res, err := common.Db.Exec(sql, inIds...)
-		if err != nil {
-			common.Log("crontab error", err)
-			return
-		}
-		common.Log("mission crontab", sql, inIds)
+		num, err := res.RowsAffected()
+		common.Log("del mission 1000 success", num)
+		time.Sleep(1 * time.Second)
 
-		lastrId, err := res.LastInsertId()
-		if lastrId == 0 {
+		if num == 0 {
 			break
 		}
+
 		if err != nil {
 			common.Log("crontab error", err)
 			return

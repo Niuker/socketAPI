@@ -22,13 +22,13 @@ func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]cha
 		res = common.SocketRouter(req, services.GetTimersWithMachine)
 	case req := <-c[mid]["setTimers"]:
 		res = common.SocketRouter(req, services.SetTimersWithMachine)
-
-	case req := <-c[mid]["getMessages"]:
-		res = common.SocketRouter(req, services.GetMessages)
-	case req := <-c[mid]["addMessages"]:
-		res = common.SocketRouter(req, services.AddMessages)
-	case req := <-c[mid]["delMessages"]:
-		res = common.SocketRouter(req, services.DelMessages)
+	//
+	//case req := <-c[mid]["getMessages"]:
+	//	res = common.SocketRouter(req, services.GetMessages)
+	//case req := <-c[mid]["addMessages"]:
+	//	res = common.SocketRouter(req, services.AddMessages)
+	//case req := <-c[mid]["delMessages"]:
+	//	res = common.SocketRouter(req, services.DelMessages)
 
 	case req := <-c[mid]["getMachines"]:
 		res = common.SocketRouter(req, services.GetMachines)

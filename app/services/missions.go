@@ -34,7 +34,7 @@ func initMission(id int, date int, mcode string, repeat bool) error {
 	err = common.Db.Select(&missionField, "select * from mission_field")
 	if err != nil {
 		common.Log("exec failed, ", err)
-		return errors.New("get mission field error")
+		return errors.New("get mission field error1")
 	}
 	if len(missions) == len(missionField) {
 		return nil
@@ -78,11 +78,33 @@ where m.user_id=? and  m.date=? and mf.isday=? and m.machine_code=?`, id, date, 
 		return nil, errors.New("getMissions field error")
 	}
 
+	var missionField []common.MissionField
+	err = common.Db.Select(&missionField, "select * from mission_field")
+	if err != nil {
+		common.Log("exec failed, ", err)
+		return nil, errors.New("get mission field error2")
+	}
+
+outside:
+	for _, mf := range missionField {
+		for _, m := range missions {
+			if m.MissionFieldId == mf.Id {
+				continue outside
+			}
+		}
+		var tmpMission common.MissionsANDMissionField
+		tmpMission.UserId = id
+		tmpMission.Value = mf.Default
+		tmpMission.Name = mf.Name
+		tmpMission.Default = mf.Default
+		tmpMission.Isday = mf.Isday
+		missions = append(missions, tmpMission)
+	}
+
 	return missions, nil
 }
 
 func GetMissions(req map[string]string) (interface{}, error) {
-
 	if _, ok := req["user_id"]; !ok {
 		return nil, errors.New("user不能为空")
 	}
@@ -113,12 +135,8 @@ func GetMissions(req map[string]string) (interface{}, error) {
 		isday = req["isday"]
 	}
 
-	err = initMission(id, date, req["machine_code"], false)
-	if err != nil {
-		return nil, err
-	}
-
 	m, err := getMissions(id, isday, date, req["machine_code"])
+	common.Log(m)
 	if err != nil {
 		return nil, err
 	}
@@ -136,6 +154,7 @@ func SetMissionsWithMachine(req map[string]string) (interface{}, error) {
 
 func GetMissionsWithMachine(req map[string]string) (interface{}, error) {
 	err := VerifyMachine(req, false)
+
 	if err != nil {
 		return nil, err
 	}
@@ -195,21 +214,39 @@ func SetMissions(req map[string]string) (interface{}, error) {
 		isday = req["isday"]
 	}
 
-	err = initMission(id, date, req["machine_code"], false)
-
-	if err != nil {
-		return nil, err
-	}
-
 	var missionField []common.MissionField
 	err = common.Db.Select(&missionField, "select * from mission_field")
 	if err != nil {
 		common.Log("exec failed, ", err)
-		return nil, errors.New("get mission field error")
+		return nil, errors.New("get mission field error3")
 	}
 
 	for _, mf := range missionField {
 		if _, ok := req[mf.Name]; ok {
+			var missions []common.Missions
+			err = common.Db.Select(&missions, "select * from missions where date=? and user_id=? and mission_field_id=? and (machine_code=? or machine_code='')",
+				date, id, mf.Id, req["machine_code"])
+			if err != nil {
+				common.Log("exec failed, ", err)
+				return nil, errors.New("get mission field error4")
+			}
+			if len(missions) == 0 {
+				var insertMission common.Missions
+				insertMission.MissionFieldId = mf.Id
+				insertMission.UserId = id
+				insertMission.MachineCode = req["machine_code"]
+				insertMission.Date = date
+				insertMission.UpdateTime = int(time.Now().Unix())
+				insertMission.Value = mf.Default
+				_, err = common.Db.NamedExec(`INSERT INTO missions (user_id, mission_field_id, value,update_time,date,machine_code) 
+VALUES (:user_id, :mission_field_id, :value, :update_time, :date,:machine_code)`, insertMission)
+
+				if err != nil {
+					common.Log("exec failed, ", err)
+					return nil, errors.New("get mission field error5")
+				}
+			}
+
 			if req[mf.Name] == "add" {
 				_, err = common.Db.Exec("update missions set `value`=value+1 where date=? and user_id=? and mission_field_id=? and (machine_code=? or machine_code='')",
 					date, id, mf.Id, req["machine_code"])

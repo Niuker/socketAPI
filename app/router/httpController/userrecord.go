@@ -7,5 +7,5 @@ import (
 )
 
 func GetUserRecord(w http.ResponseWriter, r *http.Request) {
-	common.GET(w, r, services.GetUserRecord, false)
+	common.POST(w, r, services.GetUserRecord, false)
 }

@@ -6,4 +6,5 @@ type ReqData struct {
 	Timestamp int               `json:"timestamp"`
 	Reqid     string            `json:"reqid"`
 	Quit      int               `json:"quit"`
+	Version   string            `json:"version"`
 }

@@ -11,5 +11,5 @@ func SetTimersWithMachine(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTimersWithMachine(w http.ResponseWriter, r *http.Request) {
-	common.GET(w, r, services.GetTimersWithMachineStrict, true)
+	common.POST(w, r, services.GetTimersWithMachineStrict, true)
 }

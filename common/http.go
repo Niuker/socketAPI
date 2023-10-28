@@ -34,6 +34,9 @@ func POST(w http.ResponseWriter, r *http.Request, f func(map[string]string) (int
 		if _, ok := err.(*t_errors.TencentCloudSDKError); ok {
 			res.Code = 2
 		}
+		if err.Error() == "event not exist" {
+			res.Code = 4
+		}
 		res.Error = err.Error()
 		msg, _ := json.Marshal(res)
 		w.Write(msg)

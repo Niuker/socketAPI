@@ -15,7 +15,34 @@ func SocketRouter(req structure.ReqData, f func(map[string]string) (interface{},
 	res := structure.ResData{Data: make(map[string]string), Timestamp: int(time.Now().Unix())}
 	res.Reqid = req.Reqid
 
+	if req.Event != "send" && req.Event != "revice" {
+
+		var versions []Version
+		err := Db.Select(&versions, "select * from version where name = ?", req.Event)
+		Log(req.Event)
+		if err != nil || len(versions) == 0 {
+			res.Code = 4
+			res.Error = "select version fail"
+			return res
+		}
+
+		v := false
+		for _, vv := range versions {
+			if vv.Version == req.Version {
+				v = true
+				break
+			}
+		}
+
+		if !v {
+			res.Code = 4
+			res.Error = "version not exist"
+			return res
+		}
+	}
+	
 	data, err := f(req.Params)
+
 	Log("socket", req, data, err)
 
 	if err == nil {
