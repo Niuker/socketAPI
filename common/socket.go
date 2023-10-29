@@ -40,7 +40,7 @@ func SocketRouter(req structure.ReqData, f func(map[string]string) (interface{},
 			return res
 		}
 	}
-	
+
 	data, err := f(req.Params)
 
 	Log("socket", req, data, err)

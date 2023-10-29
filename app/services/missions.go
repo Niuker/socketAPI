@@ -70,7 +70,7 @@ VALUES (:user_id, :mission_field_id, :value, :update_time, :date,:machine_code)`
 
 func getMissions(id int, isday string, date int, mcode string) ([]common.MissionsANDMissionField, error) {
 	var missions []common.MissionsANDMissionField
-	err := common.Db.Select(&missions, `select user_id, value, name, mf.default, isday 
+	err := common.Db.Select(&missions, `select user_id, mission_field_id, value, name, mf.default, isday 
 from missions as m left join mission_field as mf ON m.mission_field_id = mf.id
 where m.user_id=? and  m.date=? and mf.isday=? and m.machine_code=?`, id, date, isday, mcode)
 	if err != nil {
@@ -79,7 +79,7 @@ where m.user_id=? and  m.date=? and mf.isday=? and m.machine_code=?`, id, date, 
 	}
 
 	var missionField []common.MissionField
-	err = common.Db.Select(&missionField, "select * from mission_field")
+	err = common.Db.Select(&missionField, "select * from mission_field where isday = ?", isday)
 	if err != nil {
 		common.Log("exec failed, ", err)
 		return nil, errors.New("get mission field error2")
@@ -215,7 +215,7 @@ func SetMissions(req map[string]string) (interface{}, error) {
 	}
 
 	var missionField []common.MissionField
-	err = common.Db.Select(&missionField, "select * from mission_field")
+	err = common.Db.Select(&missionField, "select * from mission_field where isday = ?", isday)
 	if err != nil {
 		common.Log("exec failed, ", err)
 		return nil, errors.New("get mission field error3")

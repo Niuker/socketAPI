@@ -82,7 +82,7 @@ VALUES (:user_id, :timer_field_id, :value, :update_time,:machine_code)`, insertT
 
 func getTimers(id int, mcode string) ([]common.TimersANDTimerField, error) {
 	var timers []common.TimersANDTimerField
-	err := common.Db.Select(&timers, `select user_id, value, name, mf.default 
+	err := common.Db.Select(&timers, `select user_id, timer_field_id,value, name, mf.default 
 from timers as m left join timer_field as mf ON m.timer_field_id = mf.id
 where m.user_id=? and m.machine_code=?`, id, mcode)
 	if err != nil {
