@@ -85,10 +85,11 @@ type CronGiftcode struct {
 }
 
 type AutoCronGiftcode struct {
-	Id    int    `db:"id" json:"id"`
-	Code  string `db:"code" json:"code"`
-	Start string `db:"start" json:"start"`
-	End   string `db:"end" json:"end"`
+	Id         int    `db:"id" json:"id"`
+	Code       string `db:"code" json:"code"`
+	Start      string `db:"start" json:"start"`
+	End        string `db:"end" json:"end"`
+	CreateTime int    `db:"create_time" json:"create_time"`
 }
 
 type CronUidgift struct {

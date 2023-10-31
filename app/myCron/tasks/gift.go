@@ -155,7 +155,7 @@ func AutoGift() {
 
 			err = common.Db.Select(&autoCronGiftCodes, "select * from autocrongiftcode where code = ?", s.Text())
 			if err != nil {
-				common.Log("crontab error", err)
+				common.Log("crontab error 1", err)
 				return
 			}
 			if len(autoCronGiftCodes) == 0 {
@@ -163,10 +163,11 @@ func AutoGift() {
 				autoCronGiftCode.Code = s.Text()
 				autoCronGiftCode.Start = tt[0]
 				autoCronGiftCode.End = tt[1]
-				in, err := common.Db.NamedExec(`INSERT INTO autocrongiftcode (code, start, end) 
-VALUES (:code, :start, :end)`, autoCronGiftCode)
+				autoCronGiftCode.CreateTime = int(time.Now().Unix())
+				in, err := common.Db.NamedExec(`INSERT INTO autocrongiftcode (code, start, end, create_time) 
+VALUES (:code, :start, :end, :create_time)`, autoCronGiftCode)
 				if err != nil {
-					common.Log("crontab error", err)
+					common.Log("crontab error11", err)
 					common.Log(in)
 					return
 				}
@@ -174,7 +175,7 @@ VALUES (:code, :start, :end)`, autoCronGiftCode)
 				_, err = common.Db.Exec("update autocrongiftcode set `start`=? , `end`=? where  code=?",
 					tt[0], tt[1], s.Text())
 				if err != nil {
-					common.Log("crontab update error", err)
+					common.Log("crontab update error1", err)
 					return
 				}
 			}
