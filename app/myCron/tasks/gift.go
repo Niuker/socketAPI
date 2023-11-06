@@ -246,6 +246,11 @@ func getGift(uid int) {
 	token := resdatadata["token"].(string)
 
 	codeUrl := "https://statistics.pandadastudio.com/player/giftCode"
+	if len(uidString) == 12 {
+		codeUrl = "https://statistics_1.pandadastudio.com/player/giftCode"
+	} else if len(uidString) != 9 {
+		common.Log("uid crontab error", uidString)
+	}
 
 	var crongifts []common.AutoCronGiftcode
 	err = common.Db.Select(&crongifts, "select * from autocrongiftcode")
