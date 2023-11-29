@@ -6,8 +6,10 @@ import (
 	"fmt"
 	t_errors "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"socketAPI/app/structure"
+	"strings"
 	"time"
 )
 
@@ -74,6 +76,37 @@ func GET(w http.ResponseWriter, r *http.Request, f func(map[string]string) (inte
 		msg, _ := json.Marshal(res)
 		w.Write(msg)
 	}
+}
+
+func HttpPost(url string, x string) ([]byte, error) {
+	method := "POST"
+
+	payload := strings.NewReader(x)
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, payload)
+
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36")
+	//req.Header.Add("origin", "https://statistics.pandadastudio.com")
+	//req.Header.Add("referer", "https://statistics.pandadastudio.com/")
+	req.Header.Add("accept-encoding", "gzip, deflate, br")
+	req.Header.Add("Content-Type", "application/json")
+
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
 }
 
 func HttpGet(url string, reqParams map[string]string) ([]byte, error) {

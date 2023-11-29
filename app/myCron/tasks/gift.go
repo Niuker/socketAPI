@@ -2,6 +2,7 @@ package tasks
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"net/http"
 	"regexp"
@@ -17,12 +18,12 @@ func AutoGift() {
 	url := "https://wiki.biligame.com/nmd3/%E5%85%91%E6%8D%A2%E7%A0%81"
 	res, err := http.Get(url)
 	if err != nil {
-		common.Log("crontab error", err)
+		common.Log("crontab error1", err)
 		return
 	}
 	defer res.Body.Close()
 	if res.StatusCode != 200 {
-		common.Log("crontab error", err)
+		common.Log("crontab error2", err)
 		common.Log("status code error: %d %s", res.StatusCode, res.Status)
 		return
 	}
@@ -32,7 +33,7 @@ func AutoGift() {
 	tmpymd := "2006年1月2日"
 	tmpymdhi := "2006年1月2日15:04"
 	if err != nil {
-		common.Log("crontab error", err)
+		common.Log("crontab error 3", err)
 		return
 	}
 	doc.Find(".main-line-wrap .resp-tabs .resp-tabs-container .resp-tab-content").Eq(0).Each(func(i int, s *goquery.Selection) {
@@ -43,12 +44,12 @@ func AutoGift() {
 			timeurl := "https://wiki.biligame.com/nmd3/" + s.Text()
 			timeRes, err := http.Get(timeurl)
 			if err != nil {
-				common.Log("crontab error", err)
+				common.Log("crontab error 4", err)
 				return
 			}
 			defer timeRes.Body.Close()
 			if timeRes.StatusCode != 200 {
-				common.Log("crontab error", err)
+				common.Log("crontab error 5", err)
 				common.Log("status code error: %d %s", timeRes.StatusCode, timeRes.Status)
 				return
 			}
@@ -133,17 +134,17 @@ func AutoGift() {
 			var autoCronGiftCodes []common.AutoCronGiftcode
 			regQ, err := regexp.Compile("[年月]")
 			if err != nil {
-				common.Log("crontab error", err)
+				common.Log("crontab error 6", err)
 				return
 			}
 			regQr, err := regexp.Compile("[日]")
 			if err != nil {
-				common.Log("crontab error", err)
+				common.Log("crontab error 8", err)
 				return
 			}
 			regQt, err := regexp.Compile("[:]")
 			if err != nil {
-				common.Log("crontab error", err)
+				common.Log("crontab error 9", err)
 				return
 			}
 			tt[0] = regQ.ReplaceAllString(tt[0], "-")
@@ -155,7 +156,7 @@ func AutoGift() {
 
 			err = common.Db.Select(&autoCronGiftCodes, "select * from autocrongiftcode where code = ?", s.Text())
 			if err != nil {
-				common.Log("crontab error 1", err)
+				common.Log("crontab error 10", err)
 				return
 			}
 			if len(autoCronGiftCodes) == 0 {
@@ -167,7 +168,7 @@ func AutoGift() {
 				in, err := common.Db.NamedExec(`INSERT INTO autocrongiftcode (code, start, end, create_time) 
 VALUES (:code, :start, :end, :create_time)`, autoCronGiftCode)
 				if err != nil {
-					common.Log("crontab error11", err)
+					common.Log("crontab error 11", err)
 					common.Log(in)
 					return
 				}
@@ -195,68 +196,90 @@ func GiftStart() {
 
 	err := common.Db.Select(&cronuids, "select * from cronuid where exp_time > ? and del=0", time.Now().Unix())
 	if err != nil {
-		common.Log("crontab error", err)
+		common.Log("crontab error 12", err)
 		return
 	}
 	t := time.Now()
 	newTime := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
 	err = common.Db.Select(&machines, "select * from machines where update_time > ?", newTime.Unix())
 	if err != nil {
-		common.Log("crontab error", err)
+		common.Log("crontab error 13", err)
 		return
 	}
+	token := getToken()
 
 	for _, u := range cronuids {
-		getGift(u.UserId)
+		getGift(u.UserId, token)
 	}
 	for _, u := range machines {
-		getGift(u.UserId)
+		getGift(u.UserId, token)
 	}
 	common.Log("GiftStart end")
 
 }
 
-func getGift(uid int) {
-	uidString := strconv.Itoa(uid)
+func getToken() string {
 	sourceUrl := "https://cn.yhsvc.pandadastudio.com/captcha/apis/v1/apps/ninja3/versions/v1/captchas"
 	sourceParams := map[string]string{}
 	sourceBody, err := common.HttpGet(sourceUrl, sourceParams)
 	if err != nil {
-		common.Log("crontab error", err)
-		return
+		common.Log("crontab error 14", err)
+		return ""
 	}
 	var data map[string]interface{}
 	err = json.Unmarshal(sourceBody, &data)
 	if err != nil {
-		common.Log("crontab error", err)
-		return
+		common.Log("crontab error 15", err)
+		return ""
 	}
 
 	if _, ok := data["data"]; !ok {
 		common.Log("crontab error data", err)
-		return
+		return ""
 	}
 
 	resdatadata := data["data"].(map[string]interface{})
 	if _, ok := resdatadata["token"]; !ok {
 		common.Log("crontab error token", err)
-		return
+		return ""
 	}
 
 	token := resdatadata["token"].(string)
 
+	tokenurl := "https://cn.yhsvc.pandadastudio.com/captcha/apis/v1/tokens/" + token + "/validate"
+	for i := 1; i <= 240; i += 2 {
+		p := fmt.Sprintf("{\"x\": %d}", i)
+		tokenBody, err := common.HttpPost(tokenurl, p)
+		//
+		if err != nil {
+			common.Log("crontab error 16", err)
+			return ""
+		}
+		var data map[string]interface{}
+		err = json.Unmarshal(tokenBody, &data)
+		if err != nil {
+			common.Log("crontab error 17", err)
+			return ""
+		}
+	}
+
+	return token
+}
+
+func getGift(uid int, token string) {
+	uidString := strconv.Itoa(uid)
 	codeUrl := "https://statistics.pandadastudio.com/player/giftCode"
 	if len(uidString) == 12 {
-		codeUrl = "https://statistics_1.pandadastudio.com/player/giftCode"
+		codeUrl = "https://statistics.pandadastudio.com/player/giftCode"
 	} else if len(uidString) != 9 {
-		common.Log("uid crontab error", uidString)
+		common.Log("uid crontab error 18", uidString)
 	}
 
 	var crongifts []common.AutoCronGiftcode
-	err = common.Db.Select(&crongifts, "select * from autocrongiftcode")
+	err := common.Db.Select(&crongifts, "select * from autocrongiftcode")
 
 	if err != nil {
-		common.Log("crontab error", err)
+		common.Log("crontab error 19", err)
 		return
 	}
 
@@ -269,7 +292,7 @@ func getGift(uid int) {
 		var cronuidgifts []common.CronUidgift
 		err = common.Db.Select(&cronuidgifts, "select * from cronuidgift where  code_id=? and user_id=?", crongift.Id, uidString)
 		if err != nil {
-			common.Log("crontab error", err)
+			common.Log("crontab error 20", err)
 			return
 		}
 		if len(cronuidgifts) > 0 {
@@ -279,17 +302,17 @@ func getGift(uid int) {
 		codeParams := map[string]string{"uid": uidString, "code": crongift.Code, "token": token}
 		codeBody, err := common.HttpGet(codeUrl, codeParams)
 		if err != nil {
-			common.Log("crontab error", err)
+			common.Log("crontab error 21", err)
 			return
 		}
 		var resData map[string]interface{}
 		err = json.Unmarshal(codeBody, &resData)
 		if err != nil {
-			common.Log("crontab error", err)
+			common.Log("crontab error 22", err, codeParams, codeBody)
 			return
 		}
 		if _, ok := resData["code"]; !ok {
-			common.Log("crontab error data", err)
+			common.Log("crontab error data 2", err)
 			return
 		}
 		//if resData["code"] == float64(424) {
@@ -308,7 +331,7 @@ func getGift(uid int) {
 			_, err = common.Db.NamedExec(`INSERT INTO cronuidgift (code_id, user_id) 
 VALUES (:code_id, :user_id)`, CronUidgift)
 			if err != nil {
-				common.Log("crontab error", err)
+				common.Log("crontab error 23", err)
 				return
 			}
 		}
