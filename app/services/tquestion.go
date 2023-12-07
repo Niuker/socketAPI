@@ -122,6 +122,9 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 
 	for _, vv := range text {
 		if vv == "" {
+			common.Log(response)
+			common.Log(response.Response)
+			common.Log(response.Response.TextDetections)
 			return nil, errors.New("reg error")
 		}
 	}
