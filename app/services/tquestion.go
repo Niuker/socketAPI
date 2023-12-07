@@ -90,7 +90,7 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	regS2, err := regexp.Compile("^B")
+	regS2, err := regexp.Compile("^(B|8)")
 	if err != nil {
 		return nil, err
 	}
@@ -102,6 +102,7 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 	var haveA bool = false
 	for _, v := range response.Response.TextDetections {
 		t := regAll.ReplaceAllString(common.StringStrip(*v.DetectedText), "")
+		common.Log(t)
 		if regS1.Match([]byte(t)) {
 			text[1] = t
 			haveA = true
@@ -122,9 +123,6 @@ func UploadTQuestion(req map[string]string) (interface{}, error) {
 
 	for _, vv := range text {
 		if vv == "" {
-			common.Log(response)
-			common.Log(response.Response)
-			common.Log(response.Response.TextDetections)
 			return nil, errors.New("reg error")
 		}
 	}
