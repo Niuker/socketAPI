@@ -47,13 +47,16 @@ func RegisterRoutes(r *mux.Router) {
 					wsRouter.HandleFunc("/"+ev.Event+"/"+vv.Version, httpController.GetNotes).Methods("POST")
 				case "getNotes":
 					wsRouter.HandleFunc("/"+ev.Event+"/"+vv.Version, httpController.AddNotes).Methods("POST")
-
+				case "getSystemTime":
+					wsRouter.HandleFunc("/"+ev.Event+"/"+vv.Version, httpController.GetSystemTimers).Methods("POST")
 				case "userRecord":
 					wsRouter.HandleFunc("/"+ev.Event+"/"+vv.Version, httpController.GetUserRecord).Methods("POST")
 				}
 			}
 		}
 	}
+
+	wsRouter.HandleFunc("/system/timestamp", httpController.GetSystemTimers).Methods("GET")
 
 	wsRouter.HandleFunc("/upload", httpController.UploadPic1).Methods("POST")
 	wsRouter.HandleFunc("/version", httpController.GetVersion).Methods("GET")

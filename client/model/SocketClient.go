@@ -8,11 +8,12 @@ import (
 )
 
 type SocketClient struct {
-	Network   string
-	Address   string
-	OnMessage func(msg string)
-	Connect   net.Conn
-	Wg        sync.WaitGroup
+	Network         string
+	Address         string
+	OnMessage       func(msg string)
+	Connect         net.Conn
+	Wg              sync.WaitGroup
+	ResponseChannel chan string
 }
 
 func (client *SocketClient) Start() error {
@@ -23,21 +24,34 @@ func (client *SocketClient) Start() error {
 	client.Wg.Add(1)
 	go HandleMessage(conn, client)
 	client.Connect = conn
+	client.ResponseChannel = make(chan string, 1) // Buffered channel to handle one response at a time
 	return nil
 }
 
+func (client *SocketClient) SendMessageAndWait(message string) (string, error) {
+	_, err := client.Connect.Write([]byte(message))
+	if err != nil {
+		return "", err
+	}
+
+	// Wait for response
+	response := <-client.ResponseChannel
+
+	return response, nil
+}
+
 func HandleMessage(conn net.Conn, client *SocketClient) {
-	var buffer [1024]byte //can binger
+	var buffer [10240]byte
 	msg := ""
 	defer client.Wg.Done()
-	for true {
+	for {
 		readcount, err := conn.Read(buffer[:])
 		if err != nil || readcount == 0 {
 			fmt.Println(err)
 			break
 		}
 		msg += string(buffer[:readcount])
-		fmt.Println(msg)
+		client.ResponseChannel <- string(buffer[:readcount])
 		if strings.Contains(msg, "&&&&") {
 			msgs := strings.Split(msg, "&&&&")
 			if len(msgs) > 1 {
@@ -45,6 +59,7 @@ func HandleMessage(conn net.Conn, client *SocketClient) {
 					client.OnMessage(m)
 				}
 				msg = msgs[len(msgs)-1]
+				// Send the received message to the response channel
 			}
 		}
 	}

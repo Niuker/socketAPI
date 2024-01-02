@@ -40,8 +40,8 @@ func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]cha
 	case req := <-c[mid]["upload2"]:
 		res = common.SocketRouter(req, services.UploadPic2)
 
-	case req := <-c[mid]["questions"]:
-		res = common.SocketRouter(req, services.UploadQuestion)
+	//case req := <-c[mid]["questions"]:
+	//	res = common.SocketRouter(req, services.UploadQuestion)
 
 	case req := <-c[mid]["addNotes"]:
 		res = common.SocketRouter(req, services.AddNotes)
@@ -50,6 +50,11 @@ func RegisterSocketRoutes(conn net.Conn, mid string, c map[string]map[string]cha
 
 	case req := <-c[mid]["userRecord"]:
 		res = common.SocketRouter(req, services.GetUserRecord)
+
+	case req := <-c[mid]["getSystemTime"]:
+		res = common.SocketRouter(req, services.GetSystemTimers)
+	case req := <-c[mid]["getTimeStamp"]:
+		res = common.SocketRouter(req, services.GetTimeStamp)
 
 	case req := <-c[mid]["send"]:
 		res = common.SocketRouter(req, func(m map[string]string) (interface{}, error) {

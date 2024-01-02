@@ -70,6 +70,7 @@ func ReadConn(conn net.Conn) ([]structure.ReqData, error) {
 		return reqs, err
 	}
 	readTextsArr := strings.Split(string(buffer[:n]), "\n")
+	Log(readTextsArr)
 	var readTexts []string
 	for _, readTextArr := range readTextsArr {
 		if strings.Join(strings.Fields(readTextArr), "") != "" {

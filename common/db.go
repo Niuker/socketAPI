@@ -174,7 +174,7 @@ var Db *sqlx.DB
 
 func InitDB() {
 	database, err := sqlx.Open("mysql", config.MyConfig.DB.User+":"+config.MyConfig.DB.Password+
-		"@tcp(127.0.0.1:"+config.MyConfig.DB.Port+")/script")
+		"@tcp(47.94.99.64:"+config.MyConfig.DB.Port+")/script")
 	if err != nil {
 		fmt.Println("open mysql failed,", err)
 		return
